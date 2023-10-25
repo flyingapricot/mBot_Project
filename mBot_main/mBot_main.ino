@@ -65,6 +65,8 @@ void setup()
   pinMode(ULTRASONIC, OUTPUT);
   pinMode(A7, INPUT); // Setup A7 as input for the push button
 
+  Serial.begin(9600);
+
 }
 void loop()
 {
