@@ -3,6 +3,10 @@
 #define ULTRASONIC 12
 #define ULTRASONIC_TIMEOUT 2000 // Max microseconds to wait; choose according to max distance of wall
 #define SPEED_OF_SOUND 340 // Update according to your own experiment
+MeDCMotor leftMotor(M1); // assigning leftMotor to port M1
+MeDCMotor rightMotor(M2); // assigning RightMotor to port M2
+
+
 int status = 0; // global status; 0 = do nothing, 1 = mBot runs
 
 
@@ -74,6 +78,32 @@ void loop()
     status = 1 - status; // Toggle status
     delay(500); // Delay 500ms so that a button push won't be counted multiple times.
   }
+
+  if(status == 1) {
+  double dist_from_left = ultrasonic_dist();
+  //Serial.println(dist_from_left);
+  if(dist_from_left < 11) {
+    //Too close to right, move left
+      leftMotor.run(-190); // Left wheel stops
+      rightMotor.run(255); // Right wheel go forward
+      delay(500);
+      //dist_from_left = ultrasonic_dist();
+    //}
+  }else if(dist_from_left > 12) {
+    //To close to left, move to right
+    //while(dist_from_left > 10) {
+      leftMotor.run(-255); // Left wheel go forward
+      rightMotor.run(190); // Right wheel stops
+      delay(500);
+      //dist_from_left = ultrasonic_dist();
+    //}
+  }else {
+    leftMotor.run(-255); // Left wheel goes forward (anti-clockwise)
+    rightMotor.run(255); // Right wheel goes forward (clockwise)
+    
+  }
+}
+
 // Read ultrasonic sensing distance (choose an appropriate timeout)
 // Read IR sensing distance (turn off IR, read IR detector, turn on IR,
 //read IR detector, estimate distance)
