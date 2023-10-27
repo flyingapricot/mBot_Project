@@ -89,7 +89,7 @@ void loop()
 
   if(status == 1) {
     int sensorState = lineFollower.readSensors(); // read the line sensor's state
-    if (sensorState == S1_IN_S2_IN || sensorState == S1_IN_S2_OUT || sensorState == S1_OUT_S2_IN) //when black line is reached
+    if (sensorState != S1_OUT_S2_OUT) //when black line is reached
     {
       stopRobot();
       //Serial.println("DETECTED");
