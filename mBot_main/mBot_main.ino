@@ -27,95 +27,61 @@ void stopRobot() {
 
 // green - turning right 90 deg
 void turnRight() {
-// spin left motor forwards and right motor backwards for t
- digitalWrite(leftMotorPin1, HIGH);
-  digitalWrite(leftMotorPin2, LOW);
-  digitalWrite(rightMotorPin1, LOW);
-  digitalWrite(rightMotorPin2, HIGH);
-   delay(1500);
-// stop both left and right motor for stabilising b4 next action 
+  leftMotor.run(-255); // Left wheel goes forward
+  rightMotor.run(-255); // Right wheel goes backwards
+  delay(1500);
   leftMotor.stop();
   rightMotor.stop();
 }
 
 // red - turning left 90 deg
 void turnLeft() {
-// spin left motor backwards and right motor forwards for t
- digitalWrite(leftMotorPin1, LOW);
-  digitalWrite(leftMotorPin2, HIGH);
-  digitalWrite(rightMotorPin1, HIGH);
-  digitalWrite(rightMotorPin2, LOW);
-delay(1500);
-// stop both left and right motor for stabilising b4 next action 
+  leftMotor.run(255); // Left wheel goes backwards
+  rightMotor.run(255); // Right wheel goes forwards
+  delay(1500);
   leftMotor.stop();
   rightMotor.stop();
 }
 
 // orange - uturn
 void uTurn() {
-// spin left motor backwards and right motor forwards for 2t
- digitalWrite(leftMotorPin1, LOW);
-  digitalWrite(leftMotorPin2, HIGH);
-  digitalWrite(rightMotorPin1, HIGH);
-  digitalWrite(rightMotorPin2, LOW);
-delay(3000);
-// stop both left and right motor for stabilising b4 next action 
+  leftMotor.run(255); // Left wheel goes backwards
+  rightMotor.run(255); // Right wheel goes forwards
+  delay(3000);
   leftMotor.stop();
   rightMotor.stop();
 }
 
 // purple - double left turn
 void doubleLeftTurn() {
-// spin left motor backwards and right motor forwards for t 
-digitalWrite(leftMotorPin1, LOW);
-  digitalWrite(leftMotorPin2, HIGH);
-  digitalWrite(rightMotorPin1, HIGH);
-  digitalWrite(rightMotorPin2, LOW);
-delay(1500);
-// stop both left and right motor for stabilising b4 next action
+  leftMotor.run(255); // Left wheel goes backwards
+  rightMotor.run(255); // Right wheel goes forwards
+  delay(1500);
   leftMotor.stop();
   rightMotor.stop();
-// both motor moves forward for t
-digitalWrite(leftMotorPin1, HIGH);
-  digitalWrite(leftMotorPin2, LOW);
-  digitalWrite(rightMotorPin1, HIGH);
-  digitalWrite(rightMotorPin2, LOW);
-delay(2000);
-// spin left motor backwards and right motor forwards for t
- digitalWrite(leftMotorPin1, LOW);
-  digitalWrite(leftMotorPin2, HIGH);
-  digitalWrite(rightMotorPin1, HIGH);
-  digitalWrite(rightMotorPin2, LOW);
-delay(1500);
-// stop both left and right motor for stabilising b4 next action
+  leftMotor.run(-255); // Left wheel goes forwards
+  rightMotor.run(255); // Right wheel goes forwards
+  delay(2000);
+  leftMotor.run(255); // Left wheel goes backwards
+  rightMotor.run(255); // Right wheel goes forwards
+  delay(1500);
   leftMotor.stop();
   rightMotor.stop();
 }
 
 // blue
 void doubleRightTurn() {
-// spin left motor backwards and right motor forwards for t
- digitalWrite(leftMotorPin1, HIGH);
-  digitalWrite(leftMotorPin2, LOW);
-  digitalWrite(rightMotorPin1, LOW);
-  digitalWrite(rightMotorPin2, HIGH);
-   delay(1500);
-// stop both left and right motor for stabilising b4 next action
+  leftMotor.run(-255); // Left wheel goes forwards
+  rightMotor.run(-255); // Right wheel goes backwards
+  delay(1500);
   leftMotor.stop();
   rightMotor.stop();
-// both motor moves forward for t
-digitalWrite(leftMotorPin1, HIGH);
-  digitalWrite(leftMotorPin2, LOW);
-  digitalWrite(rightMotorPin1, HIGH);
-  digitalWrite(rightMotorPin2, LOW);
-delay(2000);
-// spin left motor backwards and right motor forwards for t
- digitalWrite(leftMotorPin1, HIGH);
-  digitalWrite(leftMotorPin2, LOW);
-  digitalWrite(rightMotorPin1, LOW);
-  digitalWrite(rightMotorPin2, HIGH);
-   delay(1500);
-// stop both left and right motor for stabilising b4 next action 
+  leftMotor.run(-255); // Left wheel goes forwards
+  rightMotor.run(255); // Right wheel goes forwards
+  delay(2000);
+  leftMotor.run(-255); // Left wheel goes forwards
+  rightMotor.run(-255); // Right wheel goes backwards
+  delay(1500);
   leftMotor.stop();
   rightMotor.stop();
 }
