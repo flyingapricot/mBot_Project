@@ -15,16 +15,112 @@ bool do_color_decode = false;
 
 
 // void celebrate() {// Code for playing celebratory tune}
+
+// black
 void stopRobot() {
   leftMotor.stop();
   rightMotor.stop();
 }
+
+// white
 // void moveForward() {// Code for moving forward for some short interval}
-// void turnRight() {// Code for turning right 90 deg}
-// void turnLeft() {// Code for turning left 90 deg}
-// void uTurn() {// Code for u-turn}
-// void doubleLeftTurn() {// Code for double left turn}
-// void doubleRightTurn() {// Code for double right turn}
+
+// green - turning right 90 deg
+void turnRight() {
+// spin left motor forwards and right motor backwards for t
+ digitalWrite(leftMotorPin1, HIGH);
+  digitalWrite(leftMotorPin2, LOW);
+  digitalWrite(rightMotorPin1, LOW);
+  digitalWrite(rightMotorPin2, HIGH);
+   delay(1500);
+// stop both left and right motor for stabilising b4 next action 
+  leftMotor.stop();
+  rightMotor.stop();
+}
+
+// red - turning left 90 deg
+void turnLeft() {
+// spin left motor backwards and right motor forwards for t
+ digitalWrite(leftMotorPin1, LOW);
+  digitalWrite(leftMotorPin2, HIGH);
+  digitalWrite(rightMotorPin1, HIGH);
+  digitalWrite(rightMotorPin2, LOW);
+delay(1500);
+// stop both left and right motor for stabilising b4 next action 
+  leftMotor.stop();
+  rightMotor.stop();
+}
+
+// orange - uturn
+void uTurn() {
+// spin left motor backwards and right motor forwards for 2t
+ digitalWrite(leftMotorPin1, LOW);
+  digitalWrite(leftMotorPin2, HIGH);
+  digitalWrite(rightMotorPin1, HIGH);
+  digitalWrite(rightMotorPin2, LOW);
+delay(3000);
+// stop both left and right motor for stabilising b4 next action 
+  leftMotor.stop();
+  rightMotor.stop();
+}
+
+// purple - double left turn
+void doubleLeftTurn() {
+// spin left motor backwards and right motor forwards for t 
+digitalWrite(leftMotorPin1, LOW);
+  digitalWrite(leftMotorPin2, HIGH);
+  digitalWrite(rightMotorPin1, HIGH);
+  digitalWrite(rightMotorPin2, LOW);
+delay(1500);
+// stop both left and right motor for stabilising b4 next action
+  leftMotor.stop();
+  rightMotor.stop();
+// both motor moves forward for t
+digitalWrite(leftMotorPin1, HIGH);
+  digitalWrite(leftMotorPin2, LOW);
+  digitalWrite(rightMotorPin1, HIGH);
+  digitalWrite(rightMotorPin2, LOW);
+delay(2000);
+// spin left motor backwards and right motor forwards for t
+ digitalWrite(leftMotorPin1, LOW);
+  digitalWrite(leftMotorPin2, HIGH);
+  digitalWrite(rightMotorPin1, HIGH);
+  digitalWrite(rightMotorPin2, LOW);
+delay(1500);
+// stop both left and right motor for stabilising b4 next action
+  leftMotor.stop();
+  rightMotor.stop();
+}
+
+// blue
+void doubleRightTurn() {
+// spin left motor backwards and right motor forwards for t
+ digitalWrite(leftMotorPin1, HIGH);
+  digitalWrite(leftMotorPin2, LOW);
+  digitalWrite(rightMotorPin1, LOW);
+  digitalWrite(rightMotorPin2, HIGH);
+   delay(1500);
+// stop both left and right motor for stabilising b4 next action
+  leftMotor.stop();
+  rightMotor.stop();
+// both motor moves forward for t
+digitalWrite(leftMotorPin1, HIGH);
+  digitalWrite(leftMotorPin2, LOW);
+  digitalWrite(rightMotorPin1, HIGH);
+  digitalWrite(rightMotorPin2, LOW);
+delay(2000);
+// spin left motor backwards and right motor forwards for t
+ digitalWrite(leftMotorPin1, HIGH);
+  digitalWrite(leftMotorPin2, LOW);
+  digitalWrite(rightMotorPin1, LOW);
+  digitalWrite(rightMotorPin2, HIGH);
+   delay(1500);
+// stop both left and right motor for stabilising b4 next action 
+  leftMotor.stop();
+  rightMotor.stop();
+}
+
+
 // void nudgeLeft() {// Code for nudging slightly to the left for some short
 // interval}
 // void nudgeRight() {// Code for nudging slightly to the right for some
