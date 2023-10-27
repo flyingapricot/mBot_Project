@@ -5,14 +5,20 @@
 #define SPEED_OF_SOUND 340 // Update according to your own experiment
 MeDCMotor leftMotor(M1); // assigning leftMotor to port M1
 MeDCMotor rightMotor(M2); // assigning RightMotor to port M2
+MeLineFollower lineFollower(PORT_2); // assigning lineFollower to RJ25 port 2
 
 
-int status = 0; // global status; 0 = do nothing, 1 = mBot runs
+
+int status = 0; // global status; 0 = do nothing, 1 = mBot runs,
+bool do_color_decode = false;
 
 
 
 // void celebrate() {// Code for playing celebratory tune}
-// void stopMotor() {// Code for stopping motor}
+void stopRobot() {
+  leftMotor.stop();
+  rightMotor.stop();
+}
 // void moveForward() {// Code for moving forward for some short interval}
 // void turnRight() {// Code for turning right 90 deg}
 // void turnLeft() {// Code for turning left 90 deg}
@@ -76,17 +82,30 @@ void loop()
 {
   if (analogRead(A7) < 100) { // If push button is pushed, the value will be very low
     status = 1 - status; // Toggle status
-    delay(500); // Delay 500ms so that a button push won't be counted multiple times.
+    //delay(500); // Delay 500ms so that a button push won't be counted multiple times.
   }
 
-  if(status == 1) {
+  int sensorState = lineFollower.readSensors(); // read the line sensor's state
+  if (sensorState == S1_IN_S2_IN || sensorState == S1_IN_S2_OUT || sensorState == S1_OUT_S2_IN) //when black line is reached
+  {
+    stopRobot();
+    do_color_decode = true;
+    delay(50);
+  }
+
+  if(!do_color_decode && status == 1) {
   double dist_from_left = ultrasonic_dist();
+  if(dist_from_left > 15 || dist_from_left == -1) {
+    leftMotor.run(-255); // Left wheel goes forward (anti-clockwise)
+    rightMotor.run(255); // Right wheel goes forward (clockwise)
+    return;
+  }
   //Serial.println(dist_from_left);
   if(dist_from_left < 11) {
     //Too close to right, move left
       leftMotor.run(-190); // Left wheel stops
       rightMotor.run(255); // Right wheel go forward
-      delay(500);
+      delay(250);
       //dist_from_left = ultrasonic_dist();
     //}
   }else if(dist_from_left > 12) {
@@ -94,7 +113,7 @@ void loop()
     //while(dist_from_left > 10) {
       leftMotor.run(-255); // Left wheel go forward
       rightMotor.run(190); // Right wheel stops
-      delay(500);
+      delay(250);
       //dist_from_left = ultrasonic_dist();
     //}
   }else {
