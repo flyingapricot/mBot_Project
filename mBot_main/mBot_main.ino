@@ -78,6 +78,8 @@ void setup()
   Serial.begin(9600);
 
 }
+
+
 void loop()
 {
   if (analogRead(A7) < 100) { // If push button is pushed, the value will be very low
@@ -85,43 +87,61 @@ void loop()
     //delay(500); // Delay 500ms so that a button push won't be counted multiple times.
   }
 
-  int sensorState = lineFollower.readSensors(); // read the line sensor's state
-  if (sensorState == S1_IN_S2_IN || sensorState == S1_IN_S2_OUT || sensorState == S1_OUT_S2_IN) //when black line is reached
-  {
-    stopRobot();
-    do_color_decode = true;
-    delay(50);
+  if(status == 1) {
+    int sensorState = lineFollower.readSensors(); // read the line sensor's state
+    if (sensorState == S1_IN_S2_IN || sensorState == S1_IN_S2_OUT || sensorState == S1_OUT_S2_IN) //when black line is reached
+    {
+      stopRobot();
+      //Serial.println("DETECTED");
+      do_color_decode = true;
+      delay(50);
+    }else if(!do_color_decode) {
+      double dist_from_right = ultrasonic_dist();
+      if(dist_from_right > 15 || dist_from_right == -1) {
+        leftMotor.run(-255); // Left wheel goes forward (anti-clockwise)
+        rightMotor.run(255); // Right wheel goes forward (clockwise)
+        return;
+      }else if(dist_from_right < 11) {
+        leftMotor.run(-190); // Left wheel stops
+        rightMotor.run(255); // Right wheel go forward
+        delay(250);
+      }else if(dist_from_right > 12) {
+        leftMotor.run(-255); // Left wheel go forward
+        rightMotor.run(190); // Right wheel stops
+        delay(250);
+      }else {
+        leftMotor.run(-255); // Left wheel goes forward (anti-clockwise)
+        rightMotor.run(255); // Right wheel goes forward (clockwise)
+      }
+
+    }
   }
 
-  if(!do_color_decode && status == 1) {
-  double dist_from_left = ultrasonic_dist();
-  if(dist_from_left > 15 || dist_from_left == -1) {
-    leftMotor.run(-255); // Left wheel goes forward (anti-clockwise)
-    rightMotor.run(255); // Right wheel goes forward (clockwise)
-    return;
-  }
-  //Serial.println(dist_from_left);
-  if(dist_from_left < 11) {
-    //Too close to right, move left
-      leftMotor.run(-190); // Left wheel stops
-      rightMotor.run(255); // Right wheel go forward
-      delay(250);
-      //dist_from_left = ultrasonic_dist();
-    //}
-  }else if(dist_from_left > 12) {
-    //To close to left, move to right
-    //while(dist_from_left > 10) {
-      leftMotor.run(-255); // Left wheel go forward
-      rightMotor.run(190); // Right wheel stops
-      delay(250);
-      //dist_from_left = ultrasonic_dist();
-    //}
-  }else {
-    leftMotor.run(-255); // Left wheel goes forward (anti-clockwise)
-    rightMotor.run(255); // Right wheel goes forward (clockwise)
+
+  // if(!do_color_decode && status == 1) {
+  // double dist_from_left = ultrasonic_dist();
+  // //Serial.println(dist_from_left);
+  // if(dist_from_left < 11) {
+  //   //Too close to right, move left
+  //     leftMotor.run(-190); // Left wheel stops
+  //     rightMotor.run(255); // Right wheel go forward
+  //     delay(250);
+  //     //dist_from_left = ultrasonic_dist();
+  //   //}
+  // }else if(dist_from_left > 12) {
+  //   //To close to left, move to right
+  //   //while(dist_from_left > 10) {
+  //     leftMotor.run(-255); // Left wheel go forward
+  //     rightMotor.run(190); // Right wheel stops
+  //     delay(250);
+  //     //dist_from_left = ultrasonic_dist();
+  //   //}
+  // }else {
+  //   leftMotor.run(-255); // Left wheel goes forward (anti-clockwise)
+  //   rightMotor.run(255); // Right wheel goes forward (clockwise)
     
-  }
-}
+  // }
+
 
 // Read ultrasonic sensing distance (choose an appropriate timeout)
 // Read IR sensing distance (turn off IR, read IR detector, turn on IR,
