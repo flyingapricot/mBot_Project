@@ -8,13 +8,29 @@ int status = 0; // global status; 0 = do nothing, 1 = mBot runs
 
 
 // void celebrate() {// Code for playing celebratory tune}
+
+// black
 // void stopMotor() {// Code for stopping motor}
+
+// white
 // void moveForward() {// Code for moving forward for some short interval}
+
+// green
 // void turnRight() {// Code for turning right 90 deg}
+
+// red
 // void turnLeft() {// Code for turning left 90 deg}
+
+// orange
 // void uTurn() {// Code for u-turn}
+
+// purple
 // void doubleLeftTurn() {// Code for double left turn}
+
+// blue
 // void doubleRightTurn() {// Code for double right turn}
+
+
 // void nudgeLeft() {// Code for nudging slightly to the left for some short
 // interval}
 // void nudgeRight() {// Code for nudging slightly to the right for some
