@@ -7,12 +7,8 @@ MeDCMotor leftMotor(M1); // assigning leftMotor to port M1
 MeDCMotor rightMotor(M2); // assigning RightMotor to port M2
 MeLineFollower lineFollower(PORT_2); // assigning lineFollower to RJ25 port 2
 
-
-
 int status = 0; // global status; 0 = do nothing, 1 = mBot runs,
 bool do_color_decode = false;
-
-
 
 // void celebrate() {// Code for playing celebratory tune}
 
@@ -23,29 +19,32 @@ void stopRobot() {
 }
 
 // 🟢 Called when GREEN detected at waypoint.
-// Turns mBot to the right by 90 degrees (on the spot).
-// void turnRight() {
-//   leftMotor.run(-255); // Positive: wheel turns anti-clockwise
-//   rightMotor.run(-255); // Positive: wheel turns anti-clockwise
-//   delay(330);
-//   leftMotor.stop();
-//   rightMotor.stop();
+//Turns mBot to the right by 90 degrees (on the spot).
+// TODO : Higher Delay (1500?)
+void turnRight() {
+  leftMotor.run(-255); // Positive: wheel turns anti-clockwise
+  rightMotor.run(-255); // Positive: wheel turns anti-clockwise
+  delay(330);
+  leftMotor.stop();
+  rightMotor.stop();
 
-// }
+}
 
-// // 🔴 Called when RED detected at waypoint.
-// // Turns mBot to the left by 90 degrees (on the spot).
-// void turnLeft() {
-//   leftMotor.run(255); // Positive: wheel turns anti-clockwise
-//   rightMotor.run(255); // Positive: wheel turns anti-clockwise
-//   delay(300);
-//   leftMotor.stop();
-//   rightMotor.stop();
-// }
+// 🔴 Called when RED detected at waypoint.
+// Turns mBot to the left by 90 degrees (on the spot).
+// TODO : Higher Delay (1500?)
+void turnLeft() {
+  leftMotor.run(255); // Positive: wheel turns anti-clockwise
+  rightMotor.run(255); // Positive: wheel turns anti-clockwise
+  delay(300);
+  leftMotor.stop();
+  rightMotor.stop();
+}
 
 
-//Turns the mBot successively to the left twice
 // 🟣 Called when PURPLE detected at waypoint.
+//Turns the mBot successively to the left twice
+//TODO: Higher delay at 2000ms while moving straight?
 void successiveLeft() {
   // 1. Turn mBot to the left by 90 degrees.
   turnLeft();
@@ -64,8 +63,9 @@ void successiveLeft() {
   turnLeft();
 }
 
-//Turns the mBot successively to the left twice
 // 🔵 Called when BLUE detected at waypoint.
+//Turns the mBot successively to the left twice
+//TODO: Higher delay at 2000ms while moving straight?
 void successiveRight() {
   // 1. Turn mBot to the right by 90 degrees.
   turnRight();
@@ -86,6 +86,7 @@ void successiveRight() {
 }
 
 // 🟠 Called when ORANGE detected at waypoint when closer to left wall.
+//TODO: Higher Single Delay after UTurn? (3000ms)
 void uTurn() {
   // Turn mBot 180 degrees by spinning to the left.
   // Spin left motor backward and right motor forward to turn mBot to the left.
@@ -100,166 +101,7 @@ void uTurn() {
 
 }
 
-// white
 // void moveForward() {// Code for moving forward for some short interval}
-
-// green - turning right 90 deg
-
-void turnRight() {
-// spin left motor forwards and right motor backwards for t
- digitalWrite(leftMotorPin1, HIGH);
-  digitalWrite(leftMotorPin2, LOW);
-  digitalWrite(rightMotorPin1, LOW);
-  digitalWrite(rightMotorPin2, HIGH);
-   delay(1500);
-// stop both left and right motor for stabilising b4 next action 
-  leftMotor.stop();
-  rightMotor.stop();
-}
-
-// red - turning left 90 deg
-void turnLeft() {
-// spin left motor backwards and right motor forwards for t
- digitalWrite(leftMotorPin1, LOW);
-  digitalWrite(leftMotorPin2, HIGH);
-  digitalWrite(rightMotorPin1, HIGH);
-  digitalWrite(rightMotorPin2, LOW);
-delay(1500);
-// stop both left and right motor for stabilising b4 next action 
-  leftMotor.stop();
-  rightMotor.stop();
-}
-
-// orange - uturn
-void uTurn() {
-// spin left motor backwards and right motor forwards for 2t
- digitalWrite(leftMotorPin1, LOW);
-  digitalWrite(leftMotorPin2, HIGH);
-  digitalWrite(rightMotorPin1, HIGH);
-  digitalWrite(rightMotorPin2, LOW);
-delay(3000);
-// stop both left and right motor for stabilising b4 next action 
-  leftMotor.stop();
-  rightMotor.stop();
-}
-
-// purple - double left turn
-void doubleLeftTurn() {
-// spin left motor backwards and right motor forwards for t 
-digitalWrite(leftMotorPin1, LOW);
-  digitalWrite(leftMotorPin2, HIGH);
-  digitalWrite(rightMotorPin1, HIGH);
-  digitalWrite(rightMotorPin2, LOW);
-delay(1500);
-// stop both left and right motor for stabilising b4 next action
-  leftMotor.stop();
-  rightMotor.stop();
-// both motor moves forward for t
-digitalWrite(leftMotorPin1, HIGH);
-  digitalWrite(leftMotorPin2, LOW);
-  digitalWrite(rightMotorPin1, HIGH);
-  digitalWrite(rightMotorPin2, LOW);
-delay(2000);
-// spin left motor backwards and right motor forwards for t
- digitalWrite(leftMotorPin1, LOW);
-  digitalWrite(leftMotorPin2, HIGH);
-  digitalWrite(rightMotorPin1, HIGH);
-  digitalWrite(rightMotorPin2, LOW);
-delay(1500);
-// stop both left and right motor for stabilising b4 next action
-  leftMotor.stop();
-  rightMotor.stop();
-}
-
-// blue
-void doubleRightTurn() {
-// spin left motor backwards and right motor forwards for t
- digitalWrite(leftMotorPin1, HIGH);
-  digitalWrite(leftMotorPin2, LOW);
-  digitalWrite(rightMotorPin1, LOW);
-  digitalWrite(rightMotorPin2, HIGH);
-   delay(1500);
-// stop both left and right motor for stabilising b4 next action
-  leftMotor.stop();
-  rightMotor.stop();
-// both motor moves forward for t
-digitalWrite(leftMotorPin1, HIGH);
-  digitalWrite(leftMotorPin2, LOW);
-  digitalWrite(rightMotorPin1, HIGH);
-  digitalWrite(rightMotorPin2, LOW);
-delay(2000);
-// spin left motor backwards and right motor forwards for t
- digitalWrite(leftMotorPin1, HIGH);
-  digitalWrite(leftMotorPin2, LOW);
-  digitalWrite(rightMotorPin1, LOW);
-  digitalWrite(rightMotorPin2, HIGH);
-   delay(1500);
-// stop both left and right motor for stabilising b4 next action 
-  leftMotor.stop();
-  rightMotor.stop();
-}
-
-void turnRight() {
-  leftMotor.run(-255); // Left wheel goes forward
-  rightMotor.run(-255); // Right wheel goes backwards
-  delay(1500);
-  leftMotor.stop();
-  rightMotor.stop();
-}
-
-// red - turning left 90 deg
-void turnLeft() {
-  leftMotor.run(255); // Left wheel goes backwards
-  rightMotor.run(255); // Right wheel goes forwards
-  delay(1500);
-  leftMotor.stop();
-  rightMotor.stop();
-}
-
-// orange - uturn
-void uTurn() {
-  leftMotor.run(255); // Left wheel goes backwards
-  rightMotor.run(255); // Right wheel goes forwards
-  delay(3000);
-  leftMotor.stop();
-  rightMotor.stop();
-}
-
-// purple - double left turn
-void doubleLeftTurn() {
-  leftMotor.run(255); // Left wheel goes backwards
-  rightMotor.run(255); // Right wheel goes forwards
-  delay(1500);
-  leftMotor.stop();
-  rightMotor.stop();
-  leftMotor.run(-255); // Left wheel goes forwards
-  rightMotor.run(255); // Right wheel goes forwards
-  delay(2000);
-  leftMotor.run(255); // Left wheel goes backwards
-  rightMotor.run(255); // Right wheel goes forwards
-  delay(1500);
-  leftMotor.stop();
-  rightMotor.stop();
-}
-
-// blue
-void doubleRightTurn() {
-  leftMotor.run(-255); // Left wheel goes forwards
-  rightMotor.run(-255); // Right wheel goes backwards
-  delay(1500);
-  leftMotor.stop();
-  rightMotor.stop();
-  leftMotor.run(-255); // Left wheel goes forwards
-  rightMotor.run(255); // Right wheel goes forwards
-  delay(2000);
-  leftMotor.run(-255); // Left wheel goes forwards
-  rightMotor.run(-255); // Right wheel goes backwards
-  delay(1500);
-  leftMotor.stop();
-  rightMotor.stop();
-}
-
-
 // void nudgeLeft() {// Code for nudging slightly to the left for some short
 // interval}
 // void nudgeRight() {// Code for nudging slightly to the right for some
@@ -268,6 +110,7 @@ void doubleRightTurn() {
 // void shineRed() {// Code for turning on the red LED only}
 // void shineGreen() {// Code for turning on the green LED only}
 // void shineBlue() {// Code for turning on the blue LED only}
+
 int detectColour()
 {
 // Shine Red, read LDR after some delay
