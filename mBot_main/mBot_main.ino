@@ -49,8 +49,15 @@ float greyDiff[] = {0,0,0};
 /** End of LDR Related Variables **/
 
 
-int status = 0; // global status; 0 = do nothing, 1 = mBot runs,
 bool do_color_decode = false;
+
+enum Colours {
+  detectPurple,
+  detectGreen,
+  detectBlue,
+  detectRed,
+  detectOrange
+};
 
 // void celebrate() {// Code for playing celebratory tune}
 
@@ -209,8 +216,29 @@ int detectColour()
   colourArray[1] = (colourArray[1] - blackArray[1])/(greyDiff[1])*255;
   delay(RGBWait);
   Serial.println(int(colourArray[1]));
+  analogWrite(A,LOW); //Setting A0 to High/Low
+  analogWrite(B,LOW); //Setting A0 to High/Low
+
 
   // Run algorithm for colour decoding
+  if(colourArray[1] > colourArray[2] && colourArray[1] > colourArray[0]) {
+    //🔵 is the highest -> This is 🟣
+    return detectPurple;
+  }else if(colourArray[0] > colourArray[2] && colourArray[0] > colourArray[1]) {
+    double ratio = colourArray[1]/colourArray[0]; //Blue/Green ratio
+    if(ratio < 0.5) {
+      return detectBlue;
+    }else {
+      return detectGreen;
+    }
+  }else if(colourArray[2] > colourArray[0] && colourArray[2] > colourArray[1]) {
+      double ratio = colourArray[0]/colourArray[2]; //green/red ratio
+      if(ratio < 0.7) {
+        return detectRed;
+      }else {
+        return detectOrange;
+      }
+  }
 }
 
 int getAvgReading(int times){
@@ -346,11 +374,22 @@ void loop()
     //delay(500); // Delay 500ms so that a button push won't be counted multiple times.
   }
 
+  //detectColour();
+  // shineRed();
+  // delay(1000);
+  // shineGreen();
+  // delay(1000);
+
+  // shineBlue();
+  // delay(1000);
+
+  //delay(2000);
+
   if(status == 1) {
     leftMotor.run(-255); // Negative: wheel turns anti-clockwise
     rightMotor.run(255); // Positive: wheel turns clockwise
     double distance_right = ultrasonic_dist();
-      if(distance_right < 11 && distance_right != -1) {
+    if(distance_right < 11 && distance_right != -1) {
     //Too close to right, move left
       leftMotor.run(-190); // Left wheel stops
       rightMotor.run(255); // Right wheel go forward
@@ -391,20 +430,46 @@ void loop()
       leftMotor.stop(); // Left wheel Stop
       rightMotor.stop(); // Right wheel stop
       delay(500);
-      detectColour();
-      delay(2000);
-      //Do turning right now
-      uTurn();
-      
-      // leftMotor.stop(); // Left wheel Stop
-      // rightMotor.stop(); // Right wheel stop
-      // delay(500);
 
-
-
+      enum Colours colour = detectColour();
+      switch(colour) {
+        case detectPurple:
+          Serial.println("PURPLE DETECTED!!!!");
+          successiveLeft();
+          break;
+        case detectRed:
+          Serial.println("RED DETECTED!!!!");
+          turnLeft();
+          break;
+        case detectGreen:
+          Serial.println("GREEN DETECTED!!!!");
+          turnRight();
+          break;
+        case detectOrange:
+          Serial.println("ORANGE DETECTED!!!!");
+          uTurn();
+          break;
+        case detectBlue:
+          Serial.println("BLUE DETECTED!!!!");
+          successiveRight();
+          break;
+      };
     }
-
   }
+
+  //     // delay(2000);
+  //     // //Do turning right now
+  //     // uTurn();
+      
+  //     // leftMotor.stop(); // Left wheel Stop
+  //     // rightMotor.stop(); // Right wheel stop
+  //     // delay(500);
+
+
+
+  //   }
+
+  // }
 
   // if(status == 1) {
   //   int sensorState = lineFollower.readSensors(); // read the line sensor's state
