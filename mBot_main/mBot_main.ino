@@ -22,103 +22,166 @@ void stopRobot() {
   rightMotor.stop();
 }
 
+// 🟢 Called when GREEN detected at waypoint.
+// Turns mBot to the right by 90 degrees (on the spot).
+void turnRight() {
+  leftMotor.run(-255); // Positive: wheel turns anti-clockwise
+  rightMotor.run(-255); // Positive: wheel turns anti-clockwise
+  delay(330);
+  leftMotor.stop();
+  rightMotor.stop();
+
+}
+
+// 🔴 Called when RED detected at waypoint.
+// Turns mBot to the left by 90 degrees (on the spot).
+void turnLeft() {
+  leftMotor.run(255); // Positive: wheel turns anti-clockwise
+  rightMotor.run(255); // Positive: wheel turns anti-clockwise
+  delay(300);
+  leftMotor.stop();
+  rightMotor.stop();
+}
+
+
+//Turns the mBot successively to the left twice
+// 🟣 Called when PURPLE detected at waypoint.
+void successiveLeft() {
+  // 1. Turn mBot to the left by 90 degrees.
+  turnLeft();
+
+  // 2. Then, move mBot forward by one tile.
+  leftMotor.run(-255);
+  rightMotor.run(255);
+  delay(550);  // TODO: EDIT VALUE BASED ON LAB VALUES.
+
+  // 3. After moving forward, stop motors and wait for a short duration for mBot to stabilise.
+  leftMotor.stop();
+  rightMotor.stop();
+  delay(20);
+
+  // 4. Finally, turn mBot to the left by 90 degrees again.
+  turnLeft();
+}
+
+//Turns the mBot successively to the left twice
+// 🔵 Called when BLUE detected at waypoint.
+void successiveRight() {
+  // 1. Turn mBot to the right by 90 degrees.
+  turnRight();
+
+  // 2. Then, move mBot forward by one tile.
+  leftMotor.run(-255);
+  rightMotor.run(255);
+  delay(550);  // TODO: EDIT VALUE BASED ON LAB VALUES.
+
+  // 3. After moving forward, stop motors and wait for a short duration for mBot to stabilise.
+  leftMotor.stop();
+  rightMotor.stop();
+  delay(20);
+
+  // 4. Finally, turn mBot to the right by 90 degrees again.
+  turnRight();
+
+}
+
 // white
 // void moveForward() {// Code for moving forward for some short interval}
 
 // green - turning right 90 deg
-void turnRight() {
-// spin left motor forwards and right motor backwards for t
- digitalWrite(leftMotorPin1, HIGH);
-  digitalWrite(leftMotorPin2, LOW);
-  digitalWrite(rightMotorPin1, LOW);
-  digitalWrite(rightMotorPin2, HIGH);
-   delay(1500);
-// stop both left and right motor for stabilising b4 next action 
-  leftMotor.stop();
-  rightMotor.stop();
-}
+// void turnRight() {
+// // spin left motor forwards and right motor backwards for t
+//  digitalWrite(leftMotorPin1, HIGH);
+//   digitalWrite(leftMotorPin2, LOW);
+//   digitalWrite(rightMotorPin1, LOW);
+//   digitalWrite(rightMotorPin2, HIGH);
+//    delay(1500);
+// // stop both left and right motor for stabilising b4 next action 
+//   leftMotor.stop();
+//   rightMotor.stop();
+// }
 
-// red - turning left 90 deg
-void turnLeft() {
-// spin left motor backwards and right motor forwards for t
- digitalWrite(leftMotorPin1, LOW);
-  digitalWrite(leftMotorPin2, HIGH);
-  digitalWrite(rightMotorPin1, HIGH);
-  digitalWrite(rightMotorPin2, LOW);
-delay(1500);
-// stop both left and right motor for stabilising b4 next action 
-  leftMotor.stop();
-  rightMotor.stop();
-}
+// // red - turning left 90 deg
+// void turnLeft() {
+// // spin left motor backwards and right motor forwards for t
+//  digitalWrite(leftMotorPin1, LOW);
+//   digitalWrite(leftMotorPin2, HIGH);
+//   digitalWrite(rightMotorPin1, HIGH);
+//   digitalWrite(rightMotorPin2, LOW);
+// delay(1500);
+// // stop both left and right motor for stabilising b4 next action 
+//   leftMotor.stop();
+//   rightMotor.stop();
+// }
 
-// orange - uturn
-void uTurn() {
-// spin left motor backwards and right motor forwards for 2t
- digitalWrite(leftMotorPin1, LOW);
-  digitalWrite(leftMotorPin2, HIGH);
-  digitalWrite(rightMotorPin1, HIGH);
-  digitalWrite(rightMotorPin2, LOW);
-delay(3000);
-// stop both left and right motor for stabilising b4 next action 
-  leftMotor.stop();
-  rightMotor.stop();
-}
+// // orange - uturn
+// void uTurn() {
+// // spin left motor backwards and right motor forwards for 2t
+//  digitalWrite(leftMotorPin1, LOW);
+//   digitalWrite(leftMotorPin2, HIGH);
+//   digitalWrite(rightMotorPin1, HIGH);
+//   digitalWrite(rightMotorPin2, LOW);
+// delay(3000);
+// // stop both left and right motor for stabilising b4 next action 
+//   leftMotor.stop();
+//   rightMotor.stop();
+// }
 
-// purple - double left turn
-void doubleLeftTurn() {
-// spin left motor backwards and right motor forwards for t 
-digitalWrite(leftMotorPin1, LOW);
-  digitalWrite(leftMotorPin2, HIGH);
-  digitalWrite(rightMotorPin1, HIGH);
-  digitalWrite(rightMotorPin2, LOW);
-delay(1500);
-// stop both left and right motor for stabilising b4 next action
-  leftMotor.stop();
-  rightMotor.stop();
-// both motor moves forward for t
-digitalWrite(leftMotorPin1, HIGH);
-  digitalWrite(leftMotorPin2, LOW);
-  digitalWrite(rightMotorPin1, HIGH);
-  digitalWrite(rightMotorPin2, LOW);
-delay(2000);
-// spin left motor backwards and right motor forwards for t
- digitalWrite(leftMotorPin1, LOW);
-  digitalWrite(leftMotorPin2, HIGH);
-  digitalWrite(rightMotorPin1, HIGH);
-  digitalWrite(rightMotorPin2, LOW);
-delay(1500);
-// stop both left and right motor for stabilising b4 next action
-  leftMotor.stop();
-  rightMotor.stop();
-}
+// // purple - double left turn
+// void doubleLeftTurn() {
+// // spin left motor backwards and right motor forwards for t 
+// digitalWrite(leftMotorPin1, LOW);
+//   digitalWrite(leftMotorPin2, HIGH);
+//   digitalWrite(rightMotorPin1, HIGH);
+//   digitalWrite(rightMotorPin2, LOW);
+// delay(1500);
+// // stop both left and right motor for stabilising b4 next action
+//   leftMotor.stop();
+//   rightMotor.stop();
+// // both motor moves forward for t
+// digitalWrite(leftMotorPin1, HIGH);
+//   digitalWrite(leftMotorPin2, LOW);
+//   digitalWrite(rightMotorPin1, HIGH);
+//   digitalWrite(rightMotorPin2, LOW);
+// delay(2000);
+// // spin left motor backwards and right motor forwards for t
+//  digitalWrite(leftMotorPin1, LOW);
+//   digitalWrite(leftMotorPin2, HIGH);
+//   digitalWrite(rightMotorPin1, HIGH);
+//   digitalWrite(rightMotorPin2, LOW);
+// delay(1500);
+// // stop both left and right motor for stabilising b4 next action
+//   leftMotor.stop();
+//   rightMotor.stop();
+// }
 
-// blue
-void doubleRightTurn() {
-// spin left motor backwards and right motor forwards for t
- digitalWrite(leftMotorPin1, HIGH);
-  digitalWrite(leftMotorPin2, LOW);
-  digitalWrite(rightMotorPin1, LOW);
-  digitalWrite(rightMotorPin2, HIGH);
-   delay(1500);
-// stop both left and right motor for stabilising b4 next action
-  leftMotor.stop();
-  rightMotor.stop();
-// both motor moves forward for t
-digitalWrite(leftMotorPin1, HIGH);
-  digitalWrite(leftMotorPin2, LOW);
-  digitalWrite(rightMotorPin1, HIGH);
-  digitalWrite(rightMotorPin2, LOW);
-delay(2000);
-// spin left motor backwards and right motor forwards for t
- digitalWrite(leftMotorPin1, HIGH);
-  digitalWrite(leftMotorPin2, LOW);
-  digitalWrite(rightMotorPin1, LOW);
-  digitalWrite(rightMotorPin2, HIGH);
-   delay(1500);
-// stop both left and right motor for stabilising b4 next action 
-  leftMotor.stop();
-  rightMotor.stop();
-}
+// // blue
+// void doubleRightTurn() {
+// // spin left motor backwards and right motor forwards for t
+//  digitalWrite(leftMotorPin1, HIGH);
+//   digitalWrite(leftMotorPin2, LOW);
+//   digitalWrite(rightMotorPin1, LOW);
+//   digitalWrite(rightMotorPin2, HIGH);
+//    delay(1500);
+// // stop both left and right motor for stabilising b4 next action
+//   leftMotor.stop();
+//   rightMotor.stop();
+// // both motor moves forward for t
+// digitalWrite(leftMotorPin1, HIGH);
+//   digitalWrite(leftMotorPin2, LOW);
+//   digitalWrite(rightMotorPin1, HIGH);
+//   digitalWrite(rightMotorPin2, LOW);
+// delay(2000);
+// // spin left motor backwards and right motor forwards for t
+//  digitalWrite(leftMotorPin1, HIGH);
+//   digitalWrite(leftMotorPin2, LOW);
+//   digitalWrite(rightMotorPin1, LOW);
+//   digitalWrite(rightMotorPin2, HIGH);
+//    delay(1500);
+// // stop both left and right motor for stabilising b4 next action 
+//   leftMotor.stop();
+//   rightMotor.stop();
+// }
 
 
 // void nudgeLeft() {// Code for nudging slightly to the left for some short
@@ -184,34 +247,85 @@ void loop()
   }
 
   if(status == 1) {
+    leftMotor.run(-255); // Negative: wheel turns anti-clockwise
+    rightMotor.run(255); // Positive: wheel turns clockwise
+    double distance_right = ultrasonic_dist();
+      if(distance_right < 11) {
+    //Too close to right, move left
+      leftMotor.run(-190); // Left wheel stops
+      rightMotor.run(255); // Right wheel go forward
+      delay(15);
+      //dist_from_left = ultrasonic_dist();
+    //}
+  }else if(distance_right > 12) {
+    //To close to left, move to right
+    //while(dist_from_left > 10) {
+      leftMotor.run(-255); // Left wheel go forward
+      rightMotor.run(190); // Right wheel stops
+      delay(15);
+      //dist_from_left = ultrasonic_dist();
+    //}
+
+    // if(distance_right < 7.0 && distance_right > 0.1) {
+    //   if(distance_right < 7.0 && distance_right > 0.1) {
+    //     leftMotor.run(-140);
+    //     rightMotor.run(255);
+    //     delay(15);
+    //   }else if(distance_right < 7.0) {
+    //     leftMotor.run(-160);
+    //     rightMotor.run(255);
+    //     delay(15);
+    //   }else if(distance_right < 7.5) {
+    //     leftMotor.run(-190);
+    //     rightMotor.run(255);
+    //     delay(15);
+    //   }else {
+    //     leftMotor.run(-215);
+    //     rightMotor.run(255);
+    //     delay(15);
+    //   }
+    }
+
     int sensorState = lineFollower.readSensors(); // read the line sensor's state
-    if (sensorState != S1_OUT_S2_OUT) //when black line is reached
-    {
-      stopRobot();
-      //Serial.println("DETECTED");
-      do_color_decode = true;
-      delay(50);
-    }else if(!do_color_decode) {
-      double dist_from_right = ultrasonic_dist();
-      if(dist_from_right > 15 || dist_from_right == -1) {
-        leftMotor.run(-255); // Left wheel goes forward (anti-clockwise)
-        rightMotor.run(255); // Right wheel goes forward (clockwise)
-        return;
-      }else if(dist_from_right < 11) {
-        leftMotor.run(-190); // Left wheel stops
-        rightMotor.run(255); // Right wheel go forward
-        delay(250);
-      }else if(dist_from_right > 12) {
-        leftMotor.run(-255); // Left wheel go forward
-        rightMotor.run(190); // Right wheel stops
-        delay(250);
-      }else {
-        leftMotor.run(-255); // Left wheel goes forward (anti-clockwise)
-        rightMotor.run(255); // Right wheel goes forward (clockwise)
-      }
+    if (sensorState != S1_OUT_S2_OUT) { // run colour sensor when mbot stops at blackline
+      leftMotor.stop(); // Left wheel Stop
+      rightMotor.stop(); // Right wheel stop
+      delay(500);
+
+      //Do turning right now
+      turnRight();
+      // leftMotor.stop(); // Left wheel Stop
+      // rightMotor.stop(); // Right wheel stop
+      // delay(500);
+
+
 
     }
+
   }
+
+  // if(status == 1) {
+  //   int sensorState = lineFollower.readSensors(); // read the line sensor's state
+  //   if (sensorState != S1_OUT_S2_OUT) //when black line is reached
+  //   {
+  //     stopRobot();
+  //     //do_color_decode = true;
+  //     delay(50);
+  //   }else if(!do_color_decode) {
+  //     double right_dist = ultrasonic_dist() - 11;
+  //     if(right_dist+11 == 0) {
+  //       leftMotor.run(-255); // Left wheel goes forward (anti-clockwise)
+  //       rightMotor.run(255); // Right wheel goes forward (clockwise)
+  //     }else if(right_dist >= 0) {
+  //       leftMotor.run(-255); // Left wheel stops
+  //       rightMotor.run(255 + (right_dist)*15 - 8); // Right wheel go forward
+  //     }else {
+  //       leftMotor.run(-255 + (right_dist)*15 ); // Left wheel go forward
+  //       rightMotor.run(255-8); // Right wheel stops
+  //     }
+
+  //   }
+  // }
 
 
   // if(!do_color_decode && status == 1) {
