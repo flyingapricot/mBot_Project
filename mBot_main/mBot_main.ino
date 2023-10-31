@@ -146,8 +146,11 @@ void setBalance() {
     digitalWrite(A,LED_Array[i].A_val); //Setting A0 to High/Low
     digitalWrite(B,LED_Array[i].B_val); //Setting A0 to High/Low
     delay(RGBWait);
-
     whiteArray[i] = getAvgReading(5); //Get average of 5 readings and store in white
+    Serial.print("White Array ");
+    Serial.print(i);
+    Serial.print(" Value: ");
+    Serial.println(whiteArray[i]);
   }
 
   Serial.println("Put Black Sample For Calibration ...");
@@ -162,9 +165,18 @@ void setBalance() {
     delay(RGBWait);
 
     blackArray[i] = getAvgReading(5); //Get average of 5 readings and store in white
+    Serial.print("Black Array ");
+    Serial.print(i);
+    Serial.print(" Value: ");
+    Serial.println(blackArray[i]);
 
     //the difference between the maximum and the minimum gives the range
     greyDiff[i] = whiteArray[i] - blackArray[i];
+    Serial.print("Grey Array ");
+    Serial.print(i);
+    Serial.print(" Value: ");
+    Serial.println(greyDiff[i]);
+
   }
 
   Serial.println("Colour Sensor Is Ready.");
@@ -219,7 +231,18 @@ void setup()
   pinMode(A7, INPUT); // Setup A7 as input for the push button
 
   Serial.begin(9600);
+  whiteArray[0] = 999;
+  whiteArray[1] = 976;
+  whiteArray[2] = 989;
 
+  blackArray[0] = 960;
+  blackArray[1] = 872;
+  blackArray[2] = 958;
+
+  greyDiff[0] = 39;
+  greyDiff[1] = 104;
+  greyDiff[2] = 31;
+  //setBalance();
 }
 void loop()
 {
@@ -227,6 +250,8 @@ void loop()
     status = 1 - status; // Toggle status
     delay(500); // Delay 500ms so that a button push won't be counted multiple times.
   }
+  detectColour();
+  delay(2000);
 // Read ultrasonic sensing distance (choose an appropriate timeout)
 // Read IR sensing distance (turn off IR, read IR detector, turn on IR,
 //read IR detector, estimate distance)
