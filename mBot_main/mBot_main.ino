@@ -85,6 +85,21 @@ void successiveRight() {
 
 }
 
+// 🟠 Called when ORANGE detected at waypoint when closer to left wall.
+void uTurn() {
+  // Turn mBot 180 degrees by spinning to the left.
+  // Spin left motor backward and right motor forward to turn mBot to the left.
+  leftMotor.run(255);
+  rightMotor.run(255);
+  delay(600);  // Keep turning until turn is 180 degrees.
+
+  // After turn, stop motors and wait for a short duration for mBot to stabilise.
+  leftMotor.stop();
+  rightMotor.stop();
+  delay(300);
+
+}
+
 // white
 // void moveForward() {// Code for moving forward for some short interval}
 
@@ -293,7 +308,7 @@ void loop()
       delay(500);
 
       //Do turning right now
-      turnRight();
+      uTurn();
       // leftMotor.stop(); // Left wheel Stop
       // rightMotor.stop(); // Right wheel stop
       // delay(500);
