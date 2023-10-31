@@ -3,9 +3,51 @@
 #define ULTRASONIC 12
 #define ULTRASONIC_TIMEOUT 2000 // Max microseconds to wait; choose according to max distance of wall
 #define SPEED_OF_SOUND 340 // Update according to your own experiment
+
 MeDCMotor leftMotor(M1); // assigning leftMotor to port M1
 MeDCMotor rightMotor(M2); // assigning RightMotor to port M2
 MeLineFollower lineFollower(PORT_2); // assigning lineFollower to RJ25 port 2
+
+int status = 0; // global status; 0 = do nothing, 1 = mBot runs
+
+//High Low Pair used to specifically control each R, G and B LED by varying A and B's Analog Signal
+struct LEDPair {
+  uint8_t A_val;
+  uint8_t B_val;
+};
+
+/** Start of LDR Related Definitions**/
+
+// Define time delay before the next RGB colour turns ON to allow LDR to stabilize
+#define RGBWait 200 //in milliseconds
+// Define time delay before taking another LDR reading
+#define LDRWait 10 //in milliseconds
+#define LDR A2 //Using Port 3 S1 to read LDR Voltage
+#define IRD A3 //Using Port 3 S2 to read IR Detector Voltage
+
+
+//By varying the analog output of A and B (At Port 4), we can control each of the LEDs + IR Emitter
+#define A A0 //S1 (Pin 2 of Decoder)
+#define B A1 //S2 (Pin 3 of Decoder)
+
+
+//Green LED(A - H, B - L) at Y1, Blue LED at Y2(A- L, B -H) , Red LED at Y3 (A- H, B -H)
+LEDPair LED_Array[3];
+
+
+//placeholders for colour detected
+int red = 0;
+int green = 0;
+int blue = 0;
+
+//floats to hold colour arrays
+float colourArray[] = {0,0,0};
+float whiteArray[] = {0,0,0};
+float blackArray[] = {0,0,0};
+float greyDiff[] = {0,0,0};
+
+/** End of LDR Related Variables **/
+
 
 int status = 0; // global status; 0 = do nothing, 1 = mBot runs,
 bool do_color_decode = false;
@@ -107,22 +149,130 @@ void uTurn() {
 }
 
 // void moveForward() {// Code for moving forward for some short interval}
->>>>>>> Motor
 // void nudgeLeft() {// Code for nudging slightly to the left for some short
 // interval}
 // void nudgeRight() {// Code for nudging slightly to the right for some
 // short interval}
-// void shineIR() {// Code for turning on the IR emitter only}
-// void shineRed() {// Code for turning on the red LED only}
-// void shineGreen() {// Code for turning on the green LED only}
-// void shineBlue() {// Code for turning on the blue LED only}
+int shineIR() {
+  //Power on IR Emitter
+  analogWrite(A,LOW); //Setting A0 to High/Low
+  analogWrite(B,LOW); //Setting A1 to High/Low
+
+  delay(500);
+
+  int ans = analogRead(IRD);
+
+  return ans;
+
+}
+
+void shineRed() {    
+  analogWrite(A,LED_Array[2].A_val); //Setting A0 to High/Low
+  analogWrite(B,LED_Array[2].B_val); //Setting A0 to High/Low
+}
+
+void shineGreen() {
+  analogWrite(A,LED_Array[0].A_val); //Setting A0 to High/Low
+  analogWrite(B,LED_Array[0].B_val); //Setting A0 to High/Low
+}
+
+void shineBlue() {
+  analogWrite(A,LED_Array[1].A_val); //Setting A0 to High/Low
+  analogWrite(B,LED_Array[1].B_val); //Setting A0 to High/Low
+}
 
 int detectColour()
 {
-// Shine Red, read LDR after some delay
-// Shine Green, read LDR after some delay
-// Shine Blue, read LDR after some delay
-// Run algorithm for colour decoding
+
+  //0 - Green, 1 - Blue, 2 - Red
+
+  // Shine Red, read LDR after some delay
+  shineRed();
+  delay(RGBWait);
+  colourArray[2] = getAvgReading(5);
+  colourArray[2] = (colourArray[2] - blackArray[2])/(greyDiff[2])*255;
+  delay(RGBWait);
+  Serial.println(int(colourArray[2]));
+
+  // Shine Green, read LDR after some delay
+  shineGreen();
+  delay(RGBWait);
+  colourArray[0] = getAvgReading(5);
+  colourArray[0] = (colourArray[0] - blackArray[0])/(greyDiff[0])*255;
+  delay(RGBWait);
+  Serial.println(int(colourArray[0]));
+
+  // Shine Blue, read LDR after some delay
+  shineBlue();
+  delay(RGBWait);
+  colourArray[1] = getAvgReading(5);
+  colourArray[1] = (colourArray[1] - blackArray[1])/(greyDiff[1])*255;
+  delay(RGBWait);
+  Serial.println(int(colourArray[1]));
+
+  // Run algorithm for colour decoding
+}
+
+int getAvgReading(int times){
+  //find the average reading for the requested number of times of scanning LDR
+  int reading;
+  int total =0;
+  //take the reading as many times as requested and add them up
+  for(int i = 0;i < times;i++){
+    reading = analogRead(LDR);
+    total = reading + total;
+    delay(LDRWait);
+  }
+  //calculate the average and return it
+  return total/times;
+}
+
+void setBalance() {
+  //Set white balance
+  Serial.println("Put White Sample For Calibration ...");
+  delay(5000);
+
+  //scan the white sample.
+  //go through one colour at a time, set the maximum reading for each colour
+  //--red, green and blue to the white array
+  for(int i =0;i<3;i++) {
+    digitalWrite(A,LED_Array[i].A_val); //Setting A0 to High/Low
+    digitalWrite(B,LED_Array[i].B_val); //Setting A0 to High/Low
+    delay(RGBWait);
+    whiteArray[i] = getAvgReading(5); //Get average of 5 readings and store in white
+    Serial.print("White Array ");
+    Serial.print(i);
+    Serial.print(" Value: ");
+    Serial.println(whiteArray[i]);
+  }
+
+  Serial.println("Put Black Sample For Calibration ...");
+  delay(5000); //delay for five seconds for getting sample ready
+  
+  //Next, scan black sample
+  //go through one colour at a time, set the maximum reading for each colour
+  //--red, green and blue to the black array
+  for(int i =0;i<3;i++) {
+    digitalWrite(A,LED_Array[i].A_val); //Setting A0 to High/Low
+    digitalWrite(B,LED_Array[i].B_val); //Setting A0 to High/Low
+    delay(RGBWait);
+
+    blackArray[i] = getAvgReading(5); //Get average of 5 readings and store in white
+    Serial.print("Black Array ");
+    Serial.print(i);
+    Serial.print(" Value: ");
+    Serial.println(blackArray[i]);
+
+    //the difference between the maximum and the minimum gives the range
+    greyDiff[i] = whiteArray[i] - blackArray[i];
+    Serial.print("Grey Array ");
+    Serial.print(i);
+    Serial.print(" Value: ");
+    Serial.println(greyDiff[i]);
+
+  }
+
+  Serial.println("Colour Sensor Is Ready.");
 }
 
 double ultrasonic_dist() {
@@ -155,12 +305,37 @@ double ultrasonic_dist() {
 void setup()
 {
   // Configure pinMode for A0, A1, A2, A3
+  //Setting LED_Array
+  //0 - Green, 1 - Blue, 2 - Red
+  LED_Array[0] = {255, 0};
+  LED_Array[1] = {0, 255};
+  LED_Array[2] = {255, 255};
+  
+  //Setting A0(A) and A1(B) to output to control the LEDs + IR Emitter
+  pinMode(A, OUTPUT);
+  pinMode(B, OUTPUT);
+
+  //Setting A2 and A3 to input to recieve input from IR Detector + LDR
+  pinMode(IRD, INPUT); //A1 recieves input from IR Detector
+  pinMode(LDR, INPUT); //A2 recieves input from LDR
+
   
   pinMode(ULTRASONIC, OUTPUT);
   pinMode(A7, INPUT); // Setup A7 as input for the push button
 
-  //Serial.begin(9600);
+  Serial.begin(9600);
+  whiteArray[0] = 999;
+  whiteArray[1] = 976;
+  whiteArray[2] = 989;
 
+  blackArray[0] = 960;
+  blackArray[1] = 872;
+  blackArray[2] = 958;
+
+  greyDiff[0] = 39;
+  greyDiff[1] = 104;
+  greyDiff[2] = 31;
+  //setBalance();
 }
 
 
@@ -216,9 +391,11 @@ void loop()
       leftMotor.stop(); // Left wheel Stop
       rightMotor.stop(); // Right wheel stop
       delay(500);
-
+      detectColour();
+      delay(2000);
       //Do turning right now
       uTurn();
+      
       // leftMotor.stop(); // Left wheel Stop
       // rightMotor.stop(); // Right wheel stop
       // delay(500);
