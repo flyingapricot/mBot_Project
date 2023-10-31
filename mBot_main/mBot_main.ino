@@ -90,9 +90,14 @@ void successiveRight() {
 void uTurn() {
   // Turn mBot 180 degrees by spinning to the left.
   // Spin left motor backward and right motor forward to turn mBot to the left.
+
+  // leftMotor.run(100);
+  // rightMotor.run(0);
+  // delay(200);
+
   leftMotor.run(255);
   rightMotor.run(255);
-  delay(600);  // Keep turning until turn is 180 degrees.
+  delay(575);  // Keep turning until turn is 180 degrees.
 
   // After turn, stop motors and wait for a short duration for mBot to stabilise.
   leftMotor.stop();
@@ -153,7 +158,7 @@ void setup()
   pinMode(ULTRASONIC, OUTPUT);
   pinMode(A7, INPUT); // Setup A7 as input for the push button
 
-  Serial.begin(9600);
+  //Serial.begin(9600);
 
 }
 
@@ -169,14 +174,14 @@ void loop()
     leftMotor.run(-255); // Negative: wheel turns anti-clockwise
     rightMotor.run(255); // Positive: wheel turns clockwise
     double distance_right = ultrasonic_dist();
-      if(distance_right < 11) {
+      if(distance_right < 11 && distance_right != -1) {
     //Too close to right, move left
       leftMotor.run(-190); // Left wheel stops
       rightMotor.run(255); // Right wheel go forward
       delay(15);
       //dist_from_left = ultrasonic_dist();
     //}
-  }else if(distance_right > 12) {
+  }else if(distance_right > 12 && distance_right <= 20) {
     //To close to left, move to right
     //while(dist_from_left > 10) {
       leftMotor.run(-255); // Left wheel go forward
