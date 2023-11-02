@@ -56,7 +56,8 @@ enum Colours {
   detectGreen,
   detectBlue,
   detectRed,
-  detectOrange
+  detectOrange,
+  detectWhite
 };
 
 // void celebrate() {// Code for playing celebratory tune}
@@ -73,7 +74,7 @@ void stopRobot() {
 void turnRight() {
   leftMotor.run(-255); // Positive: wheel turns anti-clockwise
   rightMotor.run(-255); // Positive: wheel turns anti-clockwise
-  delay(330);
+  delay(310);
   leftMotor.stop();
   rightMotor.stop();
 
@@ -85,7 +86,7 @@ void turnRight() {
 void turnLeft() {
   leftMotor.run(255); // Positive: wheel turns anti-clockwise
   rightMotor.run(255); // Positive: wheel turns anti-clockwise
-  delay(300);
+  delay(310);
   leftMotor.stop();
   rightMotor.stop();
 }
@@ -101,7 +102,7 @@ void successiveLeft() {
   // 2. Then, move mBot forward by one tile.
   leftMotor.run(-255);
   rightMotor.run(255);
-  delay(550);  // TODO: EDIT VALUE BASED ON LAB VALUES.
+  delay(700);  // TODO: EDIT VALUE BASED ON LAB VALUES. PREV VAL: 600
 
   // 3. After moving forward, stop motors and wait for a short duration for mBot to stabilise.
   leftMotor.stop();
@@ -122,7 +123,7 @@ void successiveRight() {
   // 2. Then, move mBot forward by one tile.
   leftMotor.run(-255);
   rightMotor.run(255);
-  delay(550);  // TODO: EDIT VALUE BASED ON LAB VALUES.
+  delay(700);  // TODO: EDIT VALUE BASED ON LAB VALUES. (Last: 600)
 
   // 3. After moving forward, stop motors and wait for a short duration for mBot to stabilise.
   leftMotor.stop();
@@ -219,23 +220,100 @@ int detectColour()
   analogWrite(A,LOW); //Setting A0 to High/Low
   analogWrite(B,LOW); //Setting A0 to High/Low
 
+  //New Algo
+  //0 - Green, 1 - Blue, 2 - Red
+  // double gr = fabs(colourArray[0]/colourArray[2]); //Green/Red
+  // double rb = fabs(colourArray[2]/colourArray[1]); //Red/Blue
+  // double bg = fabs(colourArray[1]/colourArray[0]); //Blue/Green
 
+  // if( (gr >= 0.6 && gr <=1) && (rb >= 1.95 && rb <= 2.35) && (bg >=0.35 && bg <= 0.75) ) {
+  //   Serial.println("ORANGE DETECTED");
+  //   return detectOrange;
+  // }
+
+  // if( (gr >= 1.05 && gr <=1.45) && (rb >= 0.55 && rb <= 0.95) && (bg >=0.8 && bg <= 1.2) ) {
+  //   Serial.println("PURPLE DETECTED");
+  //   return detectPurple;
+  // }
+
+  // if( (gr >= 3.8 && gr <=4.2) && (rb >= 0.2 && rb <= 0.6) && (bg >=0.35 && bg <= 0.75) ) {
+  //   Serial.println("GREEN DETECTED");
+  //   return detectGreen;
+  // }
+   
+  // if( (gr >= 2.7 && gr <=3.1) && (rb >= 0.15 && rb <= 0.55) && (bg >=0.8 && bg <= 1.2) ) {
+  //   Serial.println("BLUE DETECTED");
+  //   return detectBlue;
+  // }
+
+  // if( (gr >= 0.5 && gr <=0.7) && (rb >= 1.8 && rb <= 2.0) && (bg >=0.7 && bg <= 0.9) ) {
+  //   Serial.println("RED DETECTED");
+  //   return detectRed;
+  // }
+
+  // Serial.println("FAILEDD!");
   // Run algorithm for colour decoding
-  if(colourArray[1] > colourArray[2] && colourArray[1] > colourArray[0]) {
-    //🔵 is the highest -> This is 🟣
-    return detectPurple;
-  }else if(colourArray[0] > colourArray[2] && colourArray[0] > colourArray[1]) {
-    double ratio = colourArray[1]/colourArray[0]; //Blue/Green ratio
-    if(ratio < 0.5) {
+  //🟢 GREEN Detected
+  //0 - Green, 1 - Blue, 2 - Red
+  // if (colourArray[0] > colourArray[1] && 
+  // colourArray[0] > colourArray[2] && colourArray[1] > colourArray[2]) {
+  //   if(colourArray[1]/colourArray[0] < 0.7) {
+  //     Serial.println("ITS GREEN!!!");
+  //     return detectGreen;
+  //   }
+  // }
+
+  // //🔵 BLUE /🟣 PURPLE Detected 
+  // //0 - Green, 1 - Blue, 2 - Red
+  // if (colourArray[0] > colourArray[2] && colourArray[1] > colourArray[2] ) {
+  //   if(colourArray[2]/colourArray[0] > 0.5) {
+  //     Serial.println("ITS PURPLE!!!");
+  //     return detectPurple;
+  //   }
+  //   Serial.println("ITS BLUE!!!");
+  //   return detectBlue;
+  // }
+
+  // //🔵 ORANGE /🟣 RED Detected 
+  // //0 - Green, 1 - Blue, 2 - Red
+  // if (colourArray[2] > colourArray[0] && colourArray[2] > colourArray[1]) {
+  //   if(colourArray[0]/colourArray[2] < 0.7) {
+  //     Serial.println("ITS RED!!!");
+  //     return detectRed;
+  //   }
+  //   Serial.println("ITS ORANGE!!!");
+  //   return detectOrange;
+  // }
+
+
+  
+
+  //0 - Green, 1 - Blue, 2 - Red
+  // if(colourArray[1] > colourArray[2] && colourArray[1] > colourArray[0]) {
+  //   //🔵 is the highest -> This is 🟣
+  //   Serial.println("ITS PURPLE!!!");
+  //   return detectPurple;
+  if(colourArray[0] >= 180 && colourArray[1] >= 180 && colourArray[2] >= 180) {
+    Serial.println("ITS WHITE!!!");
+    return detectWhite;
+  }
+  /*}*/if(colourArray[0] > colourArray[2] && colourArray[0] > colourArray[1]) {
+    double ratio = colourArray[0]/colourArray[1]; //Green/Blue ratio
+    if(colourArray[2] >= 130) {Serial.println("ITS PURPLE!!!");return detectPurple;}
+    else if(colourArray[2] >= 95) {
+      Serial.println("ITS BLUE!!!");
       return detectBlue;
     }else {
+      Serial.println("ITS GREEN!!!");
       return detectGreen;
     }
   }else if(colourArray[2] > colourArray[0] && colourArray[2] > colourArray[1]) {
       double ratio = colourArray[0]/colourArray[2]; //green/red ratio
-      if(ratio < 0.7) {
+      if(ratio < 0.9) {
+        Serial.println("ITS RED!!!");
         return detectRed;
       }else {
+        Serial.println("ITS ORANGE!!!");
         return detectOrange;
       }
   }
@@ -352,17 +430,31 @@ void setup()
   pinMode(A7, INPUT); // Setup A7 as input for the push button
 
   Serial.begin(9600);
-  whiteArray[0] = 999;
-  whiteArray[1] = 976;
-  whiteArray[2] = 989;
+  whiteArray[0] = 993;
+  whiteArray[1] = 995;
+  whiteArray[2] = 991;
 
-  blackArray[0] = 960;
-  blackArray[1] = 872;
-  blackArray[2] = 958;
+  blackArray[0] = 934;
+  blackArray[1] = 926;
+  blackArray[2] = 954;
 
-  greyDiff[0] = 39;
-  greyDiff[1] = 104;
-  greyDiff[2] = 31;
+  greyDiff[0] = 59;
+  greyDiff[1] = 69;
+  greyDiff[2] = 37;
+
+  // whiteArray[0] = 1000;
+  // whiteArray[1] = 1000;
+  // whiteArray[2] = 1000;
+
+  // blackArray[0] = 950;
+  // blackArray[1] = 950;
+  // blackArray[2] = 950;
+
+  // greyDiff[0] = 50;
+  // greyDiff[1] = 50;
+  // greyDiff[2] = 50;
+
+
   //setBalance();
 }
 
@@ -376,7 +468,7 @@ void loop()
 
   //detectColour();
   // shineRed();
-  // delay(1000);
+  //delay(1000);
   // shineGreen();
   // delay(1000);
 
@@ -403,7 +495,7 @@ void loop()
       rightMotor.run(190); // Right wheel stops
       delay(15);
       //dist_from_left = ultrasonic_dist();
-    //}
+  }
 
     // if(distance_right < 7.0 && distance_right > 0.1) {
     //   if(distance_right < 7.0 && distance_right > 0.1) {
@@ -423,7 +515,7 @@ void loop()
     //     rightMotor.run(255);
     //     delay(15);
     //   }
-    }
+    //}
 
     int sensorState = lineFollower.readSensors(); // read the line sensor's state
     if (sensorState != S1_OUT_S2_OUT) { // run colour sensor when mbot stops at blackline
@@ -452,6 +544,11 @@ void loop()
         case detectBlue:
           Serial.println("BLUE DETECTED!!!!");
           successiveRight();
+          break;
+        case detectWhite:
+          leftMotor.stop();
+          rightMotor.stop();
+          delay(5000);
           break;
       };
     }
