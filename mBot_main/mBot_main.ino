@@ -261,7 +261,7 @@ int detectColour()
 int getAvgReading(int times){
   //find the average reading for the requested number of times of scanning LDR
   int reading;
-  int total =0;
+  int total = 0;
   //take the reading as many times as requested and add them up
   for(int i = 0;i < times;i++){
     reading = analogRead(LDR);
@@ -351,10 +351,10 @@ void setup()
 {
   // Configure pinMode for A0, A1, A2, A3
   //Setting LED_Array
-  //0 - Green, 1 - Blue, 2 - Red
-  LED_Array[0] = {255, 0};
-  LED_Array[1] = {0, 255};
-  LED_Array[2] = {255, 255};
+  // Red [0], Green [1], Blue [2]
+  LED_Array[0] = {255, 255};
+  LED_Array[1] = {255, 0};
+  LED_Array[2] = {0, 255};
   
   //Setting A0(A) and A1(B) to output to control the LEDs + IR Emitter
   pinMode(A, OUTPUT);
@@ -363,38 +363,22 @@ void setup()
   //Setting A2 and A3 to input to recieve input from IR Detector + LDR
   pinMode(IRD, INPUT); //A1 recieves input from IR Detector
   pinMode(LDR, INPUT); //A2 recieves input from LDR
-
   
   pinMode(ULTRASONIC, OUTPUT);
   pinMode(A7, INPUT); // Setup A7 as input for the push button
 
   Serial.begin(9600);
-  whiteArray[0] = 993;
-  whiteArray[1] = 995;
-  whiteArray[2] = 991;
+  whiteArray[0] = 991;
+  whiteArray[1] = 993;
+  whiteArray[2] = 995;
 
-  blackArray[0] = 934;
-  blackArray[1] = 926;
-  blackArray[2] = 954;
-
-  greyDiff[0] = 59;
-  greyDiff[1] = 69;
-  greyDiff[2] = 37;
-
-  // whiteArray[0] = 1000;
-  // whiteArray[1] = 1000;
-  // whiteArray[2] = 1000;
-
-  // blackArray[0] = 950;
-  // blackArray[1] = 950;
-  // blackArray[2] = 950;
-
-  // greyDiff[0] = 50;
-  // greyDiff[1] = 50;
-  // greyDiff[2] = 50;
-
-
-  //setBalance();
+  blackArray[0] = 954;
+  blackArray[1] = 934;
+  blackArray[2] = 926;
+  
+  greyDiff[0] = 37;
+  greyDiff[1] = 59;
+  greyDiff[2] = 69;
 }
 
 
@@ -404,17 +388,6 @@ void loop()
     status = 1 - status; // Toggle status
     //delay(500); // Delay 500ms so that a button push won't be counted multiple times.
   }
-
-  //detectColour();
-  // shineRed();
-  //delay(1000);
-  // shineGreen();
-  // delay(1000);
-
-  // shineBlue();
-  // delay(1000);
-
-  //delay(2000);
 
   if(status == 1) {
     leftMotor.run(-255); // Negative: wheel turns anti-clockwise
@@ -435,26 +408,6 @@ void loop()
       delay(15);
       //dist_from_left = ultrasonic_dist();
   }
-
-    // if(distance_right < 7.0 && distance_right > 0.1) {
-    //   if(distance_right < 7.0 && distance_right > 0.1) {
-    //     leftMotor.run(-140);
-    //     rightMotor.run(255);
-    //     delay(15);
-    //   }else if(distance_right < 7.0) {
-    //     leftMotor.run(-160);
-    //     rightMotor.run(255);
-    //     delay(15);
-    //   }else if(distance_right < 7.5) {
-    //     leftMotor.run(-190);
-    //     rightMotor.run(255);
-    //     delay(15);
-    //   }else {
-    //     leftMotor.run(-215);
-    //     rightMotor.run(255);
-    //     delay(15);
-    //   }
-    //}
 
     int sensorState = lineFollower.readSensors(); // read the line sensor's state
     if (sensorState != S1_OUT_S2_OUT) { // run colour sensor when mbot stops at blackline
@@ -492,76 +445,3 @@ void loop()
       };
     }
   }
-
-  //     // delay(2000);
-  //     // //Do turning right now
-  //     // uTurn();
-      
-  //     // leftMotor.stop(); // Left wheel Stop
-  //     // rightMotor.stop(); // Right wheel stop
-  //     // delay(500);
-
-
-
-  //   }
-
-  // }
-
-  // if(status == 1) {
-  //   int sensorState = lineFollower.readSensors(); // read the line sensor's state
-  //   if (sensorState != S1_OUT_S2_OUT) //when black line is reached
-  //   {
-  //     stopRobot();
-  //     //do_color_decode = true;
-  //     delay(50);
-  //   }else if(!do_color_decode) {
-  //     double right_dist = ultrasonic_dist() - 11;
-  //     if(right_dist+11 == 0) {
-  //       leftMotor.run(-255); // Left wheel goes forward (anti-clockwise)
-  //       rightMotor.run(255); // Right wheel goes forward (clockwise)
-  //     }else if(right_dist >= 0) {
-  //       leftMotor.run(-255); // Left wheel stops
-  //       rightMotor.run(255 + (right_dist)*15 - 8); // Right wheel go forward
-  //     }else {
-  //       leftMotor.run(-255 + (right_dist)*15 ); // Left wheel go forward
-  //       rightMotor.run(255-8); // Right wheel stops
-  //     }
-
-  //   }
-  // }
-
-
-  // if(!do_color_decode && status == 1) {
-  // double dist_from_left = ultrasonic_dist();
-  // //Serial.println(dist_from_left);
-  // if(dist_from_left < 11) {
-  //   //Too close to right, move left
-  //     leftMotor.run(-190); // Left wheel stops
-  //     rightMotor.run(255); // Right wheel go forward
-  //     delay(250);
-  //     //dist_from_left = ultrasonic_dist();
-  //   //}
-  // }else if(dist_from_left > 12) {
-  //   //To close to left, move to right
-  //   //while(dist_from_left > 10) {
-  //     leftMotor.run(-255); // Left wheel go forward
-  //     rightMotor.run(190); // Right wheel stops
-  //     delay(250);
-  //     //dist_from_left = ultrasonic_dist();
-  //   //}
-  // }else {
-  //   leftMotor.run(-255); // Left wheel goes forward (anti-clockwise)
-  //   rightMotor.run(255); // Right wheel goes forward (clockwise)
-    
-  // }
-
-
-// Read ultrasonic sensing distance (choose an appropriate timeout)
-// Read IR sensing distance (turn off IR, read IR detector, turn on IR,
-//read IR detector, estimate distance)
-// if within black line, stop motor, detect colour, and take corresponding
-//action
-// else if too near to left wall, nudge right
-// else if too near to right wall, nudge left
-// else move forward
-}
