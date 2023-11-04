@@ -88,8 +88,7 @@ void stopRobot() {
 }
 
 // 🟢 Called when GREEN detected at waypoint.
-//Turns mBot to the right by 90 degrees (on the spot).
-// TODO : Higher Delay (1500?)
+// Turns mBot to the right by 90 degrees (on the spot).
 void turnRight() {
   leftMotor.run(-255); // Positive: wheel turns anti-clockwise
   rightMotor.run(-255); // Positive: wheel turns anti-clockwise
@@ -101,7 +100,6 @@ void turnRight() {
 
 // 🔴 Called when RED detected at waypoint.
 // Turns mBot to the left by 90 degrees (on the spot).
-// TODO : Higher Delay (1500?)
 void turnLeft() {
   leftMotor.run(255); // Positive: wheel turns anti-clockwise
   rightMotor.run(255); // Positive: wheel turns anti-clockwise
@@ -113,7 +111,6 @@ void turnLeft() {
 
 // 🟣 Called when PURPLE detected at waypoint.
 //Turns the mBot successively to the left twice
-//TODO: Higher delay at 2000ms while moving straight?
 void successiveLeft() {
   // 1. Turn mBot to the left by 90 degrees.
   turnLeft();
@@ -134,7 +131,6 @@ void successiveLeft() {
 
 // 🔵 Called when BLUE detected at waypoint.
 //Turns the mBot successively to the left twice
-//TODO: Higher delay at 2000ms while moving straight?
 void successiveRight() {
   // 1. Turn mBot to the right by 90 degrees.
   turnRight();
@@ -155,7 +151,6 @@ void successiveRight() {
 }
 
 // 🟠 Called when ORANGE detected at waypoint when closer to left wall.
-//TODO: Higher Single Delay after UTurn? (3000ms)
 void uTurn() {
   // Turn mBot 180 degrees by spinning to the left.
   // Spin left motor backward and right motor forward to turn mBot to the left.
@@ -190,7 +185,6 @@ int shineIR() {
   int ans = analogRead(IRD);
 
   return ans;
-
 }
 
 void shineRed() {    
