@@ -175,75 +175,85 @@ int shineIR() {
 }
 
 void shineRed() {    
-  analogWrite(A,LED_Array[2].A_val); //Setting A0 to High/Low
-  analogWrite(B,LED_Array[2].B_val); //Setting A0 to High/Low
-}
-
-void shineGreen() {
   analogWrite(A,LED_Array[0].A_val); //Setting A0 to High/Low
   analogWrite(B,LED_Array[0].B_val); //Setting A0 to High/Low
 }
 
-void shineBlue() {
+void shineGreen() {
   analogWrite(A,LED_Array[1].A_val); //Setting A0 to High/Low
   analogWrite(B,LED_Array[1].B_val); //Setting A0 to High/Low
+}
+
+void shineBlue() {
+  analogWrite(A,LED_Array[2].A_val); //Setting A0 to High/Low
+  analogWrite(B,LED_Array[2].B_val); //Setting A0 to High/Low
 }
 
 int detectColour()
 {
 
-  //0 - Green, 1 - Blue, 2 - Red
+  // Red [0], Green [1], Blue [2]
 
   // Shine Red, read LDR after some delay
   shineRed();
-  delay(RGBWait);
-  colourArray[2] = getAvgReading(5);
-  colourArray[2] = (colourArray[2] - blackArray[2])/(greyDiff[2])*255;
-  delay(RGBWait);
-  Serial.println(int(colourArray[2]));
-
-  // Shine Green, read LDR after some delay
-  shineGreen();
   delay(RGBWait);
   colourArray[0] = getAvgReading(5);
   colourArray[0] = (colourArray[0] - blackArray[0])/(greyDiff[0])*255;
   delay(RGBWait);
   Serial.println(int(colourArray[0]));
 
-  // Shine Blue, read LDR after some delay
-  shineBlue();
+  // Shine Green, read LDR after some delay
+  shineGreen();
   delay(RGBWait);
   colourArray[1] = getAvgReading(5);
   colourArray[1] = (colourArray[1] - blackArray[1])/(greyDiff[1])*255;
   delay(RGBWait);
   Serial.println(int(colourArray[1]));
+
+  // Shine Blue, read LDR after some delay
+  shineBlue();
+  delay(RGBWait);
+  colourArray[2] = getAvgReading(5);
+  colourArray[2] = (colourArray[2] - blackArray[2])/(greyDiff[2])*255;
+  delay(RGBWait);
+  Serial.println(int(colourArray[2]));
   analogWrite(A,LOW); //Setting A0 to High/Low
   analogWrite(B,LOW); //Setting A0 to High/Low
 
-  //0 - Green, 1 - Blue, 2 - Red
+   // Red [0], Green [1], Blue [2]
 
-  if(colourArray[0] >= 180 && colourArray[1] >= 180 && colourArray[2] >= 180) {
+  // If R, G and B near 255 = WHITE
+  if (colourArray[0] >= 180 && colourArray[1] >= 180 && colourArray[2] >= 180) {
     Serial.println("ITS WHITE!!!");
-    return detectWhite;
+    return detectWhite; // Stops
   }
-  /*}*/if(colourArray[0] > colourArray[2] && colourArray[0] > colourArray[1]) {
-    double ratio = colourArray[0]/colourArray[1]; //Green/Blue ratio
-    if(colourArray[2] >= 130) {Serial.println("ITS PURPLE!!!");return detectPurple;}
-    else if(colourArray[2] >= 95) {
-      Serial.println("ITS BLUE!!!");
-      return detectBlue;
-    }else {
-      Serial.println("ITS GREEN!!!");
-      return detectGreen;
+  // When Green is MAX
+  if (colourArray[1] > colourArray[0] && colourArray[1] > colourArray[2]) {
+    double ratio = colourArray[1]/colourArray[2]; // Green/Blue ratio
+    // Using Red as differentiator
+    if (colourArray[0] >= 130) {
+      Serial.println("ITS PURPLE!!!");
+      return detectPurple; // Double Left turn
     }
-  }else if(colourArray[2] > colourArray[0] && colourArray[2] > colourArray[1]) {
-      double ratio = colourArray[0]/colourArray[2]; //green/red ratio
-      if(ratio < 0.9) {
+    else if (colourArray[0] >= 95) {
+      Serial.println("ITS BLUE!!!");
+      return detectBlue; // Double Right turn
+    } 
+    else {
+      Serial.println("ITS GREEN!!!");
+      return detectGreen; // Right turn
+    }
+  }
+  // When Red is MAX
+  else if (colourArray[0] > colourArray[1] && colourArray[0] > colourArray[2]) {
+      double ratio = colourArray[1]/colourArray[0]; // Green/Red ratio
+      if (ratio < 0.9) {
         Serial.println("ITS RED!!!");
-        return detectRed;
-      }else {
+        return detectRed; // Left turn
+      } 
+      else {
         Serial.println("ITS ORANGE!!!");
-        return detectOrange;
+        return detectOrange; // U-Turn
       }
   }
 }
