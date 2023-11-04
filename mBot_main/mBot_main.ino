@@ -70,7 +70,7 @@ void rickroll() {
     375, 375, 375, 375, 375, 375, 375, 375, 375, 375, 375, 375, 750
   };
 
-  for (int i = 0; i < sizeof(rickroll) / sizeof(rickrollpMelody[0]); i++) {
+  for (int i = 0; i < sizeof(rickroll) / sizeof(rickrollMelody[0]); i++) {
     if (rickrollMelody[i] == 0) {
       buzzer.noTone();
     } else {
