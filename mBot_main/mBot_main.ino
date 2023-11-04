@@ -82,16 +82,18 @@ void rickroll() {
 }
 
 
+/** Start of mBot movement functions**/
+
 void stopRobot() {
   leftMotor.stop();
   rightMotor.stop();
 }
 
 // 🟢 Called when GREEN detected at waypoint.
-// Turns mBot to the right by 90 degrees (on the spot).
+//  mBot Turns to the Right by 90 degrees (on the spot).
 void turnRight() {
-  leftMotor.run(-255); // Positive: wheel turns anti-clockwise
-  rightMotor.run(-255); // Positive: wheel turns anti-clockwise
+  leftMotor.run(-255); // Negative: Left wheel revolves forwards
+  rightMotor.run(-255); // Negative: Right wheel revolves backwards
   delay(310);
   leftMotor.stop();
   rightMotor.stop();
@@ -99,10 +101,10 @@ void turnRight() {
 }
 
 // 🔴 Called when RED detected at waypoint.
-// Turns mBot to the left by 90 degrees (on the spot).
+// mBot turns to the Left by 90 degrees (on the spot).
 void turnLeft() {
-  leftMotor.run(255); // Positive: wheel turns anti-clockwise
-  rightMotor.run(255); // Positive: wheel turns anti-clockwise
+  leftMotor.run(255); // Positive: Left wheel revolves backwards
+  rightMotor.run(255); // Positive: Right wheel revolves forwards
   delay(310);
   leftMotor.stop();
   rightMotor.stop();
@@ -110,15 +112,15 @@ void turnLeft() {
 
 
 // 🟣 Called when PURPLE detected at waypoint.
-//Turns the mBot successively to the left twice
+// mbot does Two successive Left-turns in two grids
 void successiveLeft() {
   // 1. Turn mBot to the left by 90 degrees.
   turnLeft();
 
   // 2. Then, move mBot forward by one tile.
-  leftMotor.run(-255);
-  rightMotor.run(255);
-  delay(700);  // TODO: EDIT VALUE BASED ON LAB VALUES. PREV VAL: 600
+  leftMotor.run(-255); // Negative: Left wheel revolves forwards
+  rightMotor.run(255); // Positive: Right wheel revolves forwards
+  delay(700);  // PREV VAL: 600
 
   // 3. After moving forward, stop motors and wait for a short duration for mBot to stabilise.
   leftMotor.stop();
@@ -130,15 +132,15 @@ void successiveLeft() {
 }
 
 // 🔵 Called when BLUE detected at waypoint.
-//Turns the mBot successively to the left twice
+// mbot does Two successive Right-turns in two grids
 void successiveRight() {
   // 1. Turn mBot to the right by 90 degrees.
   turnRight();
 
   // 2. Then, move mBot forward by one tile.
-  leftMotor.run(-255);
-  rightMotor.run(255);
-  delay(700);  // TODO: EDIT VALUE BASED ON LAB VALUES. (Last: 600)
+  leftMotor.run(-255); // Negative: Left wheel revolves forwards
+  rightMotor.run(255); // Positive: Right wheel revolves forwards
+  delay(700);  // PREV VAL: 600
 
   // 3. After moving forward, stop motors and wait for a short duration for mBot to stabilise.
   leftMotor.stop();
@@ -150,25 +152,23 @@ void successiveRight() {
 
 }
 
-// 🟠 Called when ORANGE detected at waypoint when closer to left wall.
+// 🟠 Called when ORANGE detected at waypoint.
+// mBot does 180° turn within the same grid  
+
 void uTurn() {
-  // Turn mBot 180 degrees by spinning to the left.
-  // Spin left motor backward and right motor forward to turn mBot to the left.
-
-  // leftMotor.run(100);
-  // rightMotor.run(0);
-  // delay(200);
-
-  leftMotor.run(255);
-  rightMotor.run(255);
+  // mBot turns to the Left by 180 degrees (on the spot).
+  leftMotor.run(255); // Positive: Left wheel revolves backwards
+  rightMotor.run(255); // Positive: Right wheel revolves forwards
   delay(575);  // Keep turning until turn is 180 degrees.
 
   // After turn, stop motors and wait for a short duration for mBot to stabilise.
   leftMotor.stop();
   rightMotor.stop();
   delay(300);
-
 }
+
+/** End of mBot movement functions**/
+
 
 // void moveForward() {// Code for moving forward for some short interval}
 // void nudgeLeft() {// Code for nudging slightly to the left for some short
