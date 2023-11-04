@@ -459,8 +459,8 @@ void loop()
         case detectWhite:
           leftMotor.stop();
           rightMotor.stop();
-          delay(5000);
           rickroll(); // play "Never Gonna Give You Up"
+          delay(5000);
           break;
       };
     }
