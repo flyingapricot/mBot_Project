@@ -220,79 +220,8 @@ int detectColour()
   analogWrite(A,LOW); //Setting A0 to High/Low
   analogWrite(B,LOW); //Setting A0 to High/Low
 
-  //New Algo
   //0 - Green, 1 - Blue, 2 - Red
-  // double gr = fabs(colourArray[0]/colourArray[2]); //Green/Red
-  // double rb = fabs(colourArray[2]/colourArray[1]); //Red/Blue
-  // double bg = fabs(colourArray[1]/colourArray[0]); //Blue/Green
 
-  // if( (gr >= 0.6 && gr <=1) && (rb >= 1.95 && rb <= 2.35) && (bg >=0.35 && bg <= 0.75) ) {
-  //   Serial.println("ORANGE DETECTED");
-  //   return detectOrange;
-  // }
-
-  // if( (gr >= 1.05 && gr <=1.45) && (rb >= 0.55 && rb <= 0.95) && (bg >=0.8 && bg <= 1.2) ) {
-  //   Serial.println("PURPLE DETECTED");
-  //   return detectPurple;
-  // }
-
-  // if( (gr >= 3.8 && gr <=4.2) && (rb >= 0.2 && rb <= 0.6) && (bg >=0.35 && bg <= 0.75) ) {
-  //   Serial.println("GREEN DETECTED");
-  //   return detectGreen;
-  // }
-   
-  // if( (gr >= 2.7 && gr <=3.1) && (rb >= 0.15 && rb <= 0.55) && (bg >=0.8 && bg <= 1.2) ) {
-  //   Serial.println("BLUE DETECTED");
-  //   return detectBlue;
-  // }
-
-  // if( (gr >= 0.5 && gr <=0.7) && (rb >= 1.8 && rb <= 2.0) && (bg >=0.7 && bg <= 0.9) ) {
-  //   Serial.println("RED DETECTED");
-  //   return detectRed;
-  // }
-
-  // Serial.println("FAILEDD!");
-  // Run algorithm for colour decoding
-  //🟢 GREEN Detected
-  //0 - Green, 1 - Blue, 2 - Red
-  // if (colourArray[0] > colourArray[1] && 
-  // colourArray[0] > colourArray[2] && colourArray[1] > colourArray[2]) {
-  //   if(colourArray[1]/colourArray[0] < 0.7) {
-  //     Serial.println("ITS GREEN!!!");
-  //     return detectGreen;
-  //   }
-  // }
-
-  // //🔵 BLUE /🟣 PURPLE Detected 
-  // //0 - Green, 1 - Blue, 2 - Red
-  // if (colourArray[0] > colourArray[2] && colourArray[1] > colourArray[2] ) {
-  //   if(colourArray[2]/colourArray[0] > 0.5) {
-  //     Serial.println("ITS PURPLE!!!");
-  //     return detectPurple;
-  //   }
-  //   Serial.println("ITS BLUE!!!");
-  //   return detectBlue;
-  // }
-
-  // //🔵 ORANGE /🟣 RED Detected 
-  // //0 - Green, 1 - Blue, 2 - Red
-  // if (colourArray[2] > colourArray[0] && colourArray[2] > colourArray[1]) {
-  //   if(colourArray[0]/colourArray[2] < 0.7) {
-  //     Serial.println("ITS RED!!!");
-  //     return detectRed;
-  //   }
-  //   Serial.println("ITS ORANGE!!!");
-  //   return detectOrange;
-  // }
-
-
-  
-
-  //0 - Green, 1 - Blue, 2 - Red
-  // if(colourArray[1] > colourArray[2] && colourArray[1] > colourArray[0]) {
-  //   //🔵 is the highest -> This is 🟣
-  //   Serial.println("ITS PURPLE!!!");
-  //   return detectPurple;
   if(colourArray[0] >= 180 && colourArray[1] >= 180 && colourArray[2] >= 180) {
     Serial.println("ITS WHITE!!!");
     return detectWhite;
