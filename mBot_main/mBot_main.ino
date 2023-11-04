@@ -16,6 +16,7 @@ struct LEDPair {
   uint8_t B_val;
 };
 
+
 /** Start of LDR Related Definitions**/
 
 // Define time delay before the next RGB colour turns ON to allow LDR to stabilize
@@ -25,15 +26,12 @@ struct LEDPair {
 #define LDR A2 //Using Port 3 S1 to read LDR Voltage
 #define IRD A3 //Using Port 3 S2 to read IR Detector Voltage
 
-
 //By varying the analog output of A and B (At Port 4), we can control each of the LEDs + IR Emitter
 #define A A0 //S1 (Pin 2 of Decoder)
 #define B A1 //S2 (Pin 3 of Decoder)
 
-
 //Green LED(A - H, B - L) at Y1, Blue LED at Y2(A- L, B -H) , Red LED at Y3 (A- H, B -H)
 LEDPair LED_Array[3];
-
 
 //placeholders for colour detected
 int red = 0;
@@ -60,7 +58,28 @@ enum Colours {
   detectWhite
 };
 
-// void celebrate() {// Code for playing celebratory tune}
+
+// void celebrate() Code for playing celebratory tune
+void rickroll() {
+  int rickrollMelody[] = { 392, 587, 587, 659, 587, 523, 494, 440,
+    392, 440, 494, 523, 494, 523, 587, 659, 587, 523, 587, 659,
+    587, 659, 698, 784, 698, 659, 523, 587, 659, 587, 523, 587, 659
+  };
+  int rickrollNoteDuration[] = { 375, 375, 375, 375, 375, 750, 375, 375,
+    375, 375, 375, 375, 375, 375, 375, 750, 375, 375, 375, 375,
+    375, 375, 375, 375, 375, 375, 375, 375, 375, 375, 375, 375, 750
+  };
+
+  for (int i = 0; i < sizeof(rickroll) / sizeof(rickrollpMelody[0]); i++) {
+    if (rickrollMelody[i] == 0) {
+      buzzer.noTone();
+    } else {
+      buzzer.tone(rickrollMelody[i], rickrollNoteDuration[i]);
+    }
+    delay(rickrollNoteDuration[i] * 1.30); // add a small delay between notes
+  }
+  buzzer.noTone();
+}
 
 
 void stopRobot() {
@@ -441,6 +460,7 @@ void loop()
           leftMotor.stop();
           rightMotor.stop();
           delay(5000);
+          rickroll(); // play "Never Gonna Give You Up"
           break;
       };
     }
