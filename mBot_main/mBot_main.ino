@@ -184,6 +184,105 @@ struct LEDPair {
 };
 
 
+int shineIR() {
+  //Power on IR Emitter
+  analogWrite(A,LOW); //Setting A0 to High/Low
+  analogWrite(B,LOW); //Setting A1 to High/Low
+
+  delay(500);
+
+  int ans = analogRead(IRD);
+
+  return ans;
+}
+
+
+/** Start of mBot movement functions**/
+
+// ⚪ Called when WHITE detected at waypoint.
+// mBot stops and plays victory tune.
+void stopRobot() {
+  leftMotor.stop();
+  rightMotor.stop();
+}
+
+// 🔴 Called when RED detected at waypoint.
+// mBot turns to the Left by 90 degrees (on the spot).
+void turnLeft() {
+  leftMotor.run(255); // Positive: Left wheel revolves backwards
+  rightMotor.run(255); // Positive: Right wheel revolves forwards
+  delay(310);
+  leftMotor.stop();
+  rightMotor.stop();
+}
+
+// 🟢 Called when GREEN detected at waypoint.
+//  mBot Turns to the Right by 90 degrees (on the spot).
+void turnRight() {
+  leftMotor.run(-255); // Negative: Left wheel revolves forwards
+  rightMotor.run(-255); // Negative: Right wheel revolves backwards
+  delay(310);
+  leftMotor.stop();
+  rightMotor.stop();
+}
+
+// 🟠 Called when ORANGE detected at waypoint.
+// mBot does 180° turn within the same grid  
+void uTurn() {
+  // mBot turns to the Left by 180 degrees (on the spot).
+  leftMotor.run(255); // Positive: Left wheel revolves backwards
+  rightMotor.run(255); // Positive: Right wheel revolves forwards
+  delay(575);  // Keep turning until turn is 180 degrees.
+
+  // After turn, stop motors and wait for a short duration for mBot to stabilise.
+  leftMotor.stop();
+  rightMotor.stop();
+  delay(300);
+}
+
+// 🟣 Called when PURPLE detected at waypoint.
+// mbot does Two successive Left-turns in two grids
+void successiveLeft() {
+  // 1. Turn mBot to the left by 90 degrees.
+  turnLeft();
+
+  // 2. Then, move mBot forward by one tile.
+  leftMotor.run(-255); // Negative: Left wheel revolves forwards
+  rightMotor.run(255); // Positive: Right wheel revolves forwards
+  delay(700);  // PREV VAL: 600
+
+  // 3. After moving forward, stop motors and wait for a short duration for mBot to stabilise.
+  leftMotor.stop();
+  rightMotor.stop();
+  delay(20);
+
+  // 4. Finally, turn mBot to the left by 90 degrees again.
+  turnLeft();
+}
+
+// 🔵 Called when BLUE detected at waypoint.
+// mbot does Two successive Right-turns in two grids
+void successiveRight() {
+  // 1. Turn mBot to the right by 90 degrees.
+  turnRight();
+
+  // 2. Then, move mBot forward by one tile.
+  leftMotor.run(-255); // Negative: Left wheel revolves forwards
+  rightMotor.run(255); // Positive: Right wheel revolves forwards
+  delay(700);  // PREV VAL: 600
+
+  // 3. After moving forward, stop motors and wait for a short duration for mBot to stabilise.
+  leftMotor.stop();
+  rightMotor.stop();
+  delay(20);
+
+  // 4. Finally, turn mBot to the right by 90 degrees again.
+  turnRight();
+}
+
+/** End of mBot movement functions**/
+
+
 /** Start of LDR Related Definitions**/
 
 // Define time delay before the next RGB colour turns ON to allow LDR to stabilize
@@ -212,6 +311,7 @@ float blackArray[] = {0,0,0};
 float greyDiff[] = {0,0,0};
 
 /** End of LDR Related Variables **/
+
 
 
 bool do_color_decode = false;
@@ -447,6 +547,9 @@ int getAvgReading(int times){
   return total/times;
 }
 
+/** Start of LDR Colour Calibration**/
+
+
 void setBalance() {
   //Set white balance
   Serial.println("Put White Sample For Calibration ...");
@@ -489,11 +592,126 @@ void setBalance() {
     Serial.print(i);
     Serial.print(" Value: ");
     Serial.println(greyDiff[i]);
-
   }
 
   Serial.println("Colour Sensor Is Ready.");
 }
+
+/** End of LDR Colour Calibration**/
+
+
+bool do_color_decode = false;
+
+int getAvgReading(int times){
+  //find the average reading for the requested number of times of scanning LDR
+  int reading;
+  int total = 0;
+  //take the reading as many times as requested and add them up
+  for(int i = 0;i < times;i++){
+    reading = analogRead(LDR);
+    total = reading + total;
+    delay(LDRWait);
+  }
+  //calculate the average and return it
+  return total/times;
+}
+
+enum Colours {
+  detectWhite,
+  detectRed,
+  detectGreen,
+  detectOrange,
+  detectPurple,
+  detectBlue, 
+};
+
+
+/** Start of LDR Colour Detection**/
+
+void shineRed() {    
+  analogWrite(A,LED_Array[0].A_val); //Setting A0 to High/Low
+  analogWrite(B,LED_Array[0].B_val); //Setting A0 to High/Low
+}
+
+void shineGreen() {
+  analogWrite(A,LED_Array[1].A_val); //Setting A0 to High/Low
+  analogWrite(B,LED_Array[1].B_val); //Setting A0 to High/Low
+}
+
+void shineBlue() {
+  analogWrite(A,LED_Array[2].A_val); //Setting A0 to High/Low
+  analogWrite(B,LED_Array[2].B_val); //Setting A0 to High/Low
+}
+
+// Red [0], Green [1], Blue [2]
+int detectColour()
+{
+  // Shine Red, read LDR after some delay
+  shineRed();
+  delay(RGBWait);
+  colourArray[0] = getAvgReading(5);
+  colourArray[0] = (colourArray[0] - blackArray[0])/(greyDiff[0])*255;
+  delay(RGBWait);
+  Serial.println(int(colourArray[0]));
+
+  // Shine Green, read LDR after some delay
+  shineGreen();
+  delay(RGBWait);
+  colourArray[1] = getAvgReading(5);
+  colourArray[1] = (colourArray[1] - blackArray[1])/(greyDiff[1])*255;
+  delay(RGBWait);
+  Serial.println(int(colourArray[1]));
+
+  // Shine Blue, read LDR after some delay
+  shineBlue();
+  delay(RGBWait);
+  colourArray[2] = getAvgReading(5);
+  colourArray[2] = (colourArray[2] - blackArray[2])/(greyDiff[2])*255;
+  delay(RGBWait);
+  Serial.println(int(colourArray[2]));
+  analogWrite(A,LOW); //Setting A0 to High/Low
+  analogWrite(B,LOW); //Setting A0 to High/Low
+
+  // Red [0], Green [1], Blue [2]
+
+  // If R, G and B near 255 = WHITE
+  if (colourArray[0] >= 180 && colourArray[1] >= 180 && colourArray[2] >= 180) {
+    Serial.println("ITS WHITE!!!");
+    return detectWhite; // Stops
+  }
+  // When Green is MAX
+  if (colourArray[1] > colourArray[0] && colourArray[1] > colourArray[2]) {
+    double ratio = colourArray[1]/colourArray[2]; // Green/Blue ratio
+    // Using Red as differentiator
+    if (colourArray[0] >= 130) {
+      Serial.println("ITS PURPLE!!!");
+      return detectPurple; // Double Left turn
+    }
+    else if (colourArray[0] >= 95) {
+      Serial.println("ITS BLUE!!!");
+      return detectBlue; // Double Right turn
+    } 
+    else {
+      Serial.println("ITS GREEN!!!");
+      return detectGreen; // Right turn
+    }
+  }
+  // When Red is MAX
+  else if (colourArray[0] > colourArray[1] && colourArray[0] > colourArray[2]) {
+      double ratio = colourArray[1]/colourArray[0]; // Green/Red ratio
+      if (ratio < 0.9) {
+        Serial.println("ITS RED!!!");
+        return detectRed; // Left turn
+      } 
+      else {
+        Serial.println("ITS ORANGE!!!");
+        return detectOrange; // U-Turn
+      }
+  }
+}
+
+/** End of LDR Colour Detection**/
+
 
 double ultrasonic_dist() {
   
@@ -510,22 +728,20 @@ double ultrasonic_dist() {
   
   if (duration > 0) {
     dist = duration / 2.0 / 1000000 * SPEED_OF_SOUND * 100;
-    //Serial.print("distance(cm) = ");
-    //Serial.println(dist);
   }
   else {
     dist = -1;
-    //Serial.println("out of range");
   }
-
-  //delay(500);
   return dist;
 }
 
+
 void setup()
 {
+  // setBalance();
+  
   // Configure pinMode for A0, A1, A2, A3
-  //Setting LED_Array
+  // Setting LED_Array
   // Red [0], Green [1], Blue [2]
   LED_Array[0] = {255, 255};
   LED_Array[1] = {255, 0};
@@ -556,6 +772,29 @@ void setup()
   greyDiff[2] = 69;
 
   celebrate();
+}
+
+
+// void celebrate() Code for playing celebratory tune
+void rickroll() {
+  int rickrollMelody[] = { 392, 587, 587, 659, 587, 523, 494, 440,
+    392, 440, 494, 523, 494, 523, 587, 659, 587, 523, 587, 659,
+    587, 659, 698, 784, 698, 659, 523, 587, 659, 587, 523, 587, 659
+  };
+  int rickrollNoteDuration[] = { 375, 375, 375, 375, 375, 750, 375, 375,
+    375, 375, 375, 375, 375, 375, 375, 750, 375, 375, 375, 375,
+    375, 375, 375, 375, 375, 375, 375, 375, 375, 375, 375, 375, 750
+  };
+
+  for (int i = 0; i < sizeof(rickrollMelody) / sizeof(rickrollMelody[0]); i++) {
+    if (rickrollMelody[i] == 0) {
+      buzzer.noTone();
+    } else {
+      buzzer.tone(rickrollMelody[i], rickrollNoteDuration[i]);
+    }
+    delay(rickrollNoteDuration[i] * 1.30); // add a small delay between notes
+  }
+  buzzer.noTone();
 }
 
 
@@ -595,9 +834,10 @@ void loop()
 
       enum Colours colour = detectColour();
       switch(colour) {
-        case detectPurple:
-          Serial.println("PURPLE DETECTED!!!!");
-          successiveLeft();
+        case detectWhite:
+          stopRobot();
+          rickroll(); // play "Never Gonna Give You Up"
+          delay(5000);
           break;
         case detectRed:
           Serial.println("RED DETECTED!!!!");
@@ -610,6 +850,10 @@ void loop()
         case detectOrange:
           Serial.println("ORANGE DETECTED!!!!");
           uTurn();
+          break;
+        case detectPurple:
+          Serial.println("PURPLE DETECTED!!!!");
+          successiveLeft();
           break;
         case detectBlue:
           Serial.println("BLUE DETECTED!!!!");
