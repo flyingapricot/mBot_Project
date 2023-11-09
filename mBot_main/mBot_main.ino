@@ -3,77 +3,19 @@
 
 /**Start of Music related Defintions **/
 // change this to make the song slower or faster
-int tempo = 114;
+int tempo = 150;
 // notes of the moledy followed by the duration.
 // a 4 means a quarter note, 8 an eighteenth , 16 sixteenth, so on
 // !!negative numbers are used to represent dotted notes,
 // so -4 means a dotted quarter note, that is, a quarter plus an eighteenth!!
 int melody[] = {
-  NOTE_A4, 0, NOTE_A4, NOTE_A4,
-  NOTE_C5, 0, NOTE_AS4, NOTE_A4, 
-  NOTE_G4,0, NOTE_G4, NOTE_AS5,
-  NOTE_A5, NOTE_AS5, NOTE_A5, NOTE_AS5,
-  NOTE_G4,0, NOTE_G4, NOTE_AS5,
-  NOTE_A5, NOTE_AS5, NOTE_A5, NOTE_AS5,
-  NOTE_AS4, NOTE_AS4, NOTE_AS4, NOTE_AS4,
-  NOTE_AS4, NOTE_AS4, NOTE_AS4, NOTE_AS4,
-  NOTE_D5, NOTE_D5, NOTE_D5, NOTE_D5,
-  NOTE_C5, NOTE_C5, NOTE_C5, NOTE_C5, 
-  NOTE_F5, NOTE_F5, NOTE_F5, NOTE_F5, 
-  NOTE_G5, NOTE_G5, NOTE_G5, NOTE_G5,
-  NOTE_G5, NOTE_G5, NOTE_G5, NOTE_G5, 
-  NOTE_G5, NOTE_G5, NOTE_G5, NOTE_G5, 
-  NOTE_C5, NOTE_AS4, NOTE_A4, NOTE_F4,
-  NOTE_G4, 0, NOTE_G4, NOTE_D5,
-  NOTE_C5, 0, NOTE_AS4, 0,
-  NOTE_A4, 0, NOTE_A4, NOTE_A4,
-  NOTE_C5, 0, NOTE_AS4, NOTE_A4, 
-  NOTE_G4,0, NOTE_G4, NOTE_AS5,
-  NOTE_A5, NOTE_AS5, NOTE_A5, NOTE_AS5,
-  NOTE_G4,0, NOTE_G4, NOTE_AS5,
-  NOTE_A5, NOTE_AS5, NOTE_A5, NOTE_AS5,
-  NOTE_G4, 0, NOTE_G4, NOTE_D5,
-  NOTE_C5, 0, NOTE_AS4, 0,
-  NOTE_A4, 0, NOTE_A4, NOTE_A4,
-  NOTE_C5, 0, NOTE_AS4, NOTE_A4, 
-  NOTE_G4,0, NOTE_G4, NOTE_AS5,
-  NOTE_A5, NOTE_AS5, NOTE_A5, NOTE_AS5,
-  NOTE_G4,0, NOTE_G4, NOTE_AS5,
-  NOTE_A5, NOTE_AS5, NOTE_A5, NOTE_AS5
- };
-int noteDurations[] = {
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  4,4,4,4,
-  };
+  NOTE_D5,16, NOTE_B4,16,
+  NOTE_FS5,-8, NOTE_FS5,-8, NOTE_E5,-4, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16,
 
+  NOTE_E5,-8, NOTE_E5,-8, NOTE_D5,-8, NOTE_CS5,16, NOTE_B4,-8, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16, //18
+  NOTE_D5,4, NOTE_E5,8, NOTE_CS5,-8, NOTE_B4,16, NOTE_A4,8, NOTE_A4,8, NOTE_A4,8, 
+  NOTE_E5,4, NOTE_D5,2, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16,
+ };
 
 /**End of Music related Defintions **/
 
@@ -83,12 +25,10 @@ MeDCMotor rightMotor(M2); // assigning RightMotor to port M2
 MeLineFollower lineFollower(PORT_2); // assigning lineFollower to RJ25 port 2
 MeBuzzer buzzer; // create the buzzer object
 
-//By varying the analog output of A and B (At Port 4), we can control each of the LEDs + IR Emitter
-#define A A0 //S1 (Pin 2 of Decoder)
-#define B A1 //S2 (Pin 3 of Decoder)
-#define LDR A2 //Using Port 3 S1 to read LDR Voltage
-#define IRD A3 //Using Port 3 S2 to read IR Detector Voltage
+bool adjustLeft;
+bool adjustRight;
 
+MeEncoderMotor Encoder;
 
 int status = 0; // global status; 0 = do nothing, 1 = mBot runs
 
@@ -112,7 +52,7 @@ void stopRobot() {
 void turnLeft() {
   leftMotor.run(255); // Positive: Left wheel revolves backwards
   rightMotor.run(255); // Positive: Right wheel revolves forwards
-  delay(310);
+  delay(310); //Previously 320
   leftMotor.stop();
   rightMotor.stop();
 }
@@ -122,7 +62,7 @@ void turnLeft() {
 void turnRight() {
   leftMotor.run(-255); // Negative: Left wheel revolves forwards
   rightMotor.run(-255); // Negative: Right wheel revolves backwards
-  delay(310);
+  delay(330); //Original: 315
   leftMotor.stop();
   rightMotor.stop();
 }
@@ -133,12 +73,17 @@ void uTurn() {
   // mBot turns to the Left by 180 degrees (on the spot).
   leftMotor.run(255); // Positive: Left wheel revolves backwards
   rightMotor.run(255); // Positive: Right wheel revolves forwards
-  delay(575);  // Keep turning until turn is 180 degrees.
+  delay(590);  // Keep turning until turn is 180 degrees. (previously 575)
 
   // After turn, stop motors and wait for a short duration for mBot to stabilise.
   leftMotor.stop();
   rightMotor.stop();
-  delay(300);
+
+  leftMotor.run(-255); // Negative: wheel turns anti-clockwise
+  rightMotor.run(255); // Positive: wheel turns clockwise
+  delay(30);
+
+  //delay(300);
 }
 
 // 🟣 Called when PURPLE detected at waypoint.
@@ -150,7 +95,7 @@ void successiveLeft() {
   // 2. Then, move mBot forward by one tile.
   leftMotor.run(-255); // Negative: Left wheel revolves forwards
   rightMotor.run(255); // Positive: Right wheel revolves forwards
-  delay(700);  // PREV VAL: 600
+  delay(730);  // PREV VAL:740
 
   // 3. After moving forward, stop motors and wait for a short duration for mBot to stabilise.
   leftMotor.stop();
@@ -170,7 +115,7 @@ void successiveRight() {
   // 2. Then, move mBot forward by one tile.
   leftMotor.run(-255); // Negative: Left wheel revolves forwards
   rightMotor.run(255); // Positive: Right wheel revolves forwards
-  delay(700);  // PREV VAL: 600
+  delay(850);  // PREV VAL: 600
 
   // 3. After moving forward, stop motors and wait for a short duration for mBot to stabilise.
   leftMotor.stop();
@@ -180,19 +125,15 @@ void successiveRight() {
   // 4. Finally, turn mBot to the right by 90 degrees again.
   turnRight();
 }
-
 /** End of mBot movement functions**/
 
 
 /** Start of LDR Related Definitions**/
 
-// Define time delay before the next RGB colour turns ON to allow LDR to stabilize
-#define RGBWait 200 //in milliseconds
-// Define time delay before taking another LDR reading
-#define LDRWait 10 //in milliseconds
-
 //Green LED(A - H, B - L) at Y1, Blue LED at Y2(A- L, B -H) , Red LED at Y3 (A- H, B -H)
 LEDPair LED_Array[3];
+
+bool do_color_decode = false;
 
 //placeholders for colour detected
 int red = 0;
@@ -214,19 +155,49 @@ enum Colours {
   detectWhite
 };
 
-bool do_color_decode = false;
 
 /** End of LDR Related Variables **/
 
 void celebrate() {
-    for (int thisNote = 0; thisNote < 100; thisNote++) {
-    int noteDuration = 750 / noteDurations[thisNote];
-    buzzer.tone(melody[thisNote], noteDuration);
-    int pauseBetweenNotes = noteDuration * 1.30;
-    delay(pauseBetweenNotes);
+  //   for (int thisNote = 0; thisNote < 100; thisNote++) {
+  //   int noteDuration = 750 / noteDurations[thisNote];
+  //   buzzer.tone(melody[thisNote], noteDuration);
+  //   int pauseBetweenNotes = noteDuration * 1.30;
+  //   delay(pauseBetweenNotes);
     
+  //   buzzer.noTone();
+  // }
+  // sizeof gives the number of bytes, each int value is composed of two bytes (16 bits)
+  // there are two values per note (pitch and duration), so for each note there are four bytes
+  int notes = sizeof(melody) / sizeof(melody[0]) / 2;
+
+  // this calculates the duration of a whole note in ms
+  int wholenote = (60000 * 4) / tempo;
+
+  int divider = 0, noteDuration = 0;
+  for (int thisNote = 0; thisNote < notes * 2; thisNote = thisNote + 2) {
+    // calculates the duration of each note
+    divider = melody[thisNote + 1];
+    if (divider > 0) {
+      // regular note, just proceed
+      noteDuration = (wholenote) / divider;
+    } else if (divider < 0) {
+      // dotted notes are represented with negative durations!!
+      noteDuration = (wholenote) / abs(divider);
+      noteDuration *= 1.5; // increases the duration in half for dotted notes
+    }
+
+    // we only play the note for 90% of the duration, leaving 10% as a pause
+    buzzer.tone(melody[thisNote], noteDuration * 0.9);
+
+    // Wait for the specief duration before playing the next note.
+    delay(noteDuration);
+
+    // stop the waveform generation before the next note.
     buzzer.noTone();
   }
+
+
 }
 
 // void moveForward() {// Code for moving forward for some short interval}
@@ -312,7 +283,6 @@ void setBalance() {
 /** End of LDR Colour Calibration**/
 
 
-
 /** Start of LDR Colour Detection**/
 void shineRed() {    
   analogWrite(A,LED_Array[0].A_val); //Setting A0 to High/Low
@@ -337,7 +307,7 @@ int detectColour(){
   colourArray[0] = getAvgReading(5);
   colourArray[0] = (colourArray[0] - blackArray[0])/(greyDiff[0])*255;
   delay(RGBWait);
-  Serial.println(int(colourArray[0]));
+  //Serial.println(int(colourArray[0]));
 
   // Shine Green, read LDR after some delay
   shineGreen();
@@ -345,7 +315,7 @@ int detectColour(){
   colourArray[1] = getAvgReading(5);
   colourArray[1] = (colourArray[1] - blackArray[1])/(greyDiff[1])*255;
   delay(RGBWait);
-  Serial.println(int(colourArray[1]));
+  //Serial.println(int(colourArray[1]));
 
   // Shine Blue, read LDR after some delay
   shineBlue();
@@ -353,46 +323,56 @@ int detectColour(){
   colourArray[2] = getAvgReading(5);
   colourArray[2] = (colourArray[2] - blackArray[2])/(greyDiff[2])*255;
   delay(RGBWait);
-  Serial.println(int(colourArray[2]));
+  //Serial.println(int(colourArray[2]));
   analogWrite(A,LOW); //Setting A0 to High/Low
   analogWrite(B,LOW); //Setting A0 to High/Low
 
   // Red [0], Green [1], Blue [2]
 
   // If R, G and B near 255 = WHITE
-  if (colourArray[0] >= 180 && colourArray[1] >= 180 && colourArray[2] >= 180) {
-    Serial.println("ITS WHITE!!!");
+  if (colourArray[0] >= 190 && colourArray[1] >= 190 && colourArray[2] >= 190) {
+    //Serial.println("ITS WHITE!!!");
     return detectWhite; // Stops
   }
   // When Green is MAX
   if (colourArray[1] > colourArray[0] && colourArray[1] > colourArray[2]) {
     double ratio = colourArray[1]/colourArray[2]; // Green/Blue ratio
     // Using Red as differentiator
-    if (colourArray[0] >= 130) {
-      Serial.println("ITS PURPLE!!!");
-      return detectPurple; // Double Left turn
-    }
-    else if (colourArray[0] >= 95) {
-      Serial.println("ITS BLUE!!!");
-      return detectBlue; // Double Right turn
-    } 
-    else {
-      Serial.println("ITS GREEN!!!");
+    // if (colourArray[0] >= 130) {
+    //   Serial.println("ITS PURPLE!!!");
+    //   return detectPurple; // Double Left turn
+    // }
+    // if (colourArray[1] >= 150) {
+    //   Serial.println("ITS BLUE!!!");
+    //   return detectBlue; // Double Right turn
+    // } 
+    //else {
+      //Serial.println("ITS GREEN!!!");
       return detectGreen; // Right turn
-    }
+    //}
   }
   // When Red is MAX
   else if (colourArray[0] > colourArray[1] && colourArray[0] > colourArray[2]) {
-      double ratio = colourArray[1]/colourArray[0]; // Green/Red ratio
-      if (ratio < 0.9) {
-        Serial.println("ITS RED!!!");
+      //Use blue/green ratio instead because green/red ratio is too close to compare
+      double ratio = colourArray[2]/colourArray[1]; //  ̶G̶r̶e̶e̶n̶/̶R̶e̶d̶ ̶r̶a̶t̶i̶o̶  blue/green ratio
+      if (colourArray[1] <= 165) {
+        //Serial.println("ITS RED!!!");
         return detectRed; // Left turn
       } 
       else {
-        Serial.println("ITS ORANGE!!!");
+        //Serial.println("ITS ORANGE!!!");
         return detectOrange; // U-Turn
       }
+  }else if(colourArray[2] > colourArray[0] && colourArray[2] > colourArray[1]) {
+    if(colourArray[0] >= 100) { //120
+      //Serial.println("ITS PURPLE!!!");
+      return detectPurple;
+    }else {
+      //Serial.println("ITS BLUE!!!");
+      return detectBlue;
+    }
   }
+
 }
 /** End of LDR Colour Detection**/
 
@@ -420,10 +400,9 @@ double ultrasonic_dist() {
 }
 
 
-void setup()
-{
-  // setBalance();
-  
+void setup(){
+  //adjustLeft = false;
+  //adjustRight = false;
   // Configure pinMode for A0, A1, A2, A3
   // Setting LED_Array
   // Red [0], Green [1], Blue [2]
@@ -441,23 +420,48 @@ void setup()
   
   pinMode(ULTRASONIC, OUTPUT);
   pinMode(A7, INPUT); // Setup A7 as input for the push button
+  //celebrate();
 
-  Serial.begin(9600);
-  whiteArray[0] = 991;
-  whiteArray[1] = 993;
-  whiteArray[2] = 995;
+  //Serial.begin(9600);
+  //setBalance();
+  // whiteArray[0] = 991;
+  // whiteArray[1] = 993;  // whiteArray[2] = 995;
 
-  blackArray[0] = 954;
-  blackArray[1] = 934;
-  blackArray[2] = 926;
+  // blackArray[0] = 954;
+  // blackArray[1] = 934;
+  // blackArray[2] = 926;
   
-  greyDiff[0] = 37;
-  greyDiff[1] = 59;
-  greyDiff[2] = 69;
+  // greyDiff[0] = 37;
+  // greyDiff[1] = 59;
+  // greyDiff[2] = 69;
 
-  celebrate();
+
+  // whiteArray[0] = 989;
+  // whiteArray[1] = 998;
+  // whiteArray[2] = 946;
+
+  // blackArray[0] = 966;
+  // blackArray[1] = 907;
+  // blackArray[2] = 709;
+  
+  // greyDiff[0] = 23;
+  // greyDiff[1] = 91;
+  // greyDiff[2] = 237;
+
+
+  whiteArray[0] = 984;
+  whiteArray[1] = 999;
+  whiteArray[2] = 997;
+
+  blackArray[0] = 957;
+  blackArray[1] = 917;
+  blackArray[2] = 943;
+  
+  greyDiff[0] = 27;
+  greyDiff[1] = 82;
+  greyDiff[2] = 54;
+  //celebrate();
 }
-
 
 // void celebrate() Code for playing celebratory tune
 void rickroll() {
@@ -481,7 +485,6 @@ void rickroll() {
   buzzer.noTone();
 }
 
-
 void loop()
 {
 
@@ -491,24 +494,102 @@ void loop()
   }
 
   if(status == 1) {
+    double distance_right = ultrasonic_dist();
     leftMotor.run(-255); // Negative: wheel turns anti-clockwise
     rightMotor.run(255); // Positive: wheel turns clockwise
-    double distance_right = ultrasonic_dist();
-    if(distance_right < 11 && distance_right != -1) {
-    //Too close to right, move left
-      leftMotor.run(-190); // Left wheel stops
+    if(distance_right < 10 && distance_right != -1) {
+      //Too close to right, move left
+      leftMotor.run(-170); // Left wheel stops
       rightMotor.run(255); // Right wheel go forward
-      delay(15);
+      delay(5);
       //dist_from_left = ultrasonic_dist();
     //}
-  }else if(distance_right > 12 && distance_right <= 20) {
+  }else if(distance_right > 11 && distance_right <= 20) {
     //To close to left, move to right
     //while(dist_from_left > 10) {
       leftMotor.run(-255); // Left wheel go forward
-      rightMotor.run(190); // Right wheel stops
-      delay(15);
+      rightMotor.run(170); // Right wheel stops
+      delay(5);
       //dist_from_left = ultrasonic_dist();
   }
+
+
+  //   if(distance_right < 8.0 && distance_right > 0.1) { /** too close to right correct to the left, corrects more if the robot is closer to the wall */
+  //   if(distance_right < 6.0 && distance_right > 0.1) {
+  //     leftMotor.run(-140);
+  //     rightMotor.run(255);
+  //     delay(15);
+  //   }
+  //   else if(distance_right < 7.0) {
+  //     leftMotor.run(-160);
+  //     rightMotor.run(255);
+  //     delay(15);
+  //   }
+  //   else if(distance_right < 7.5) {
+  //     leftMotor.run(-190);
+  //     rightMotor.run(255);
+  //     delay(15);
+  //   }
+  //   else {
+  //     leftMotor.run(-215);
+  //     rightMotor.run(255);
+  //     delay(15);
+  //   }
+  // }
+
+  // if(distance_right > 9.0 && distance_right < 15.0) { /** too close to right correct to the left, corrects more if the robot is closer to the wall */
+  //   if(distance_right >= 13.0) {
+  //     leftMotor.run(-140);
+  //     rightMotor.run(255);
+  //     delay(15);
+  //   }
+  //   else if(distance_right < 12.0) {
+  //     leftMotor.run(-160);
+  //     rightMotor.run(255);
+  //     delay(15);
+  //   }
+  //   else if(distance_right < 11) {
+  //     leftMotor.run(-190);
+  //     rightMotor.run(255);
+  //     delay(15);
+  //   }
+  //   else {
+  //     leftMotor.run(-215);
+  //     rightMotor.run(255);
+  //     delay(15);
+  //   }
+  // }
+
+    /*if( (int)distance_right == -1) {
+      if(distance_right <= 11) {
+        leftMotor.run(-190); // Left wheel stops
+        rightMotor.run(255); // Right wheel go forward
+        delay(15);
+      }
+      if(distance_right >= 12 && distance_right <= 16) {
+        leftMotor.run(-255); // Left wheel go forward
+        rightMotor.run(190); // Right wheel stops
+        delay(15);
+      }
+  //   }else*//*else {
+    //Before moving straight,check if aligned to the left or the right before moving
+    if(adjustLeft) {
+      //Then veer slightly to the right
+      leftMotor.run(-255); // Left wheel go forward
+      rightMotor.run(170); // Right wheel stops
+      delay(10);
+    }else if(adjustRight) {
+      //Then veer slightly to the left
+      leftMotor.run(-190); //Left wheel stops
+      rightMotor.run(255); // Right wheel go forward
+      delay(10);
+    }
+    leftMotor.run(-255); // Negative: wheel turns anti-clockwise
+    rightMotor.run(255); // Positive: wheel turns clockwise (235)
+    adjustLeft = false;
+    adjustRight = false;
+  }*/
+
 
     int sensorState = lineFollower.readSensors(); // read the line sensor's state
     if (sensorState != S1_OUT_S2_OUT) { // run colour sensor when mbot stops at blackline
@@ -519,23 +600,23 @@ void loop()
       enum Colours colour = detectColour();
       switch(colour) {
         case detectRed:
-          Serial.println("RED DETECTED!!!!");
+          //Serial.println("RED DETECTED!!!!");
           turnLeft();
           break;
         case detectGreen:
-          Serial.println("GREEN DETECTED!!!!");
+          //Serial.println("GREEN DETECTED!!!!");
           turnRight();
           break;
         case detectOrange:
-          Serial.println("ORANGE DETECTED!!!!");
+          //Serial.println("ORANGE DETECTED!!!!");
           uTurn();
           break;
         case detectPurple:
-          Serial.println("PURPLE DETECTED!!!!");
+          //Serial.println("PURPLE DETECTED!!!!");
           successiveLeft();
           break;
         case detectBlue:
-          Serial.println("BLUE DETECTED!!!!");
+          //Serial.println("BLUE DETECTED!!!!");
           successiveRight();
           break;
         case detectWhite:

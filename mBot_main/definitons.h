@@ -96,6 +96,17 @@
 #define NOTE_DS8 4978
 #define REST      0
 
+//By varying the analog output of A and B (At Port 4), we can control each of the LEDs + IR Emitter
+#define A A0 //S1 (Pin 2 of Decoder)
+#define B A1 //S2 (Pin 3 of Decoder)
+#define LDR A2 //Using Port 3 S1 to read LDR Voltage
+#define IRD A3 //Using Port 3 S2 to read IR Detector Voltage
+
+// Define time delay before the next RGB colour turns ON to allow LDR to stabilize
+#define RGBWait 200 //in milliseconds
+// Define time delay before taking another LDR reading
+#define LDRWait 10 //in milliseconds
+
 
 
 #endif
