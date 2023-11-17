@@ -24,6 +24,7 @@ MeDCMotor leftMotor(M1); // assigning leftMotor to port M1
 MeDCMotor rightMotor(M2); // assigning RightMotor to port M2
 MeLineFollower lineFollower(PORT_2); // assigning lineFollower to RJ25 port 2
 MeBuzzer buzzer; // create the buzzer object
+MeRGBLed led(0,30); // Based on hardware connections on mCore; cannot change
 
 bool adjustLeft;
 bool adjustRight;
@@ -47,12 +48,17 @@ void stopRobot() {
   rightMotor.stop();
 }
 
+void moveForward() {
+  leftMotor.run(-255); // Negative: wheel turns anti-clockwise
+  rightMotor.run(255); // Positive: wheel turns clockwise
+}
+
 // 🔴 Called when RED detected at waypoint.
 // mBot turns to the Left by 90 degrees (on the spot).
 void turnLeft() {
   leftMotor.run(255); // Positive: Left wheel revolves backwards
   rightMotor.run(255); // Positive: Right wheel revolves forwards
-  delay(310); //Previously 320
+  delay(300); //Previously 320/310
   leftMotor.stop();
   rightMotor.stop();
 }
@@ -62,26 +68,41 @@ void turnLeft() {
 void turnRight() {
   leftMotor.run(-255); // Negative: Left wheel revolves forwards
   rightMotor.run(-255); // Negative: Right wheel revolves backwards
-  delay(330); //Original: 315
-  leftMotor.stop();
-  rightMotor.stop();
+  delay(325); //Original: 315
+  //leftMotor.stop();
+  //rightMotor.stop();
 }
 
 // 🟠 Called when ORANGE detected at waypoint.
 // mBot does 180° turn within the same grid  
-void uTurn() {
-  // mBot turns to the Left by 180 degrees (on the spot).
-  leftMotor.run(255); // Positive: Left wheel revolves backwards
-  rightMotor.run(255); // Positive: Right wheel revolves forwards
-  delay(590);  // Keep turning until turn is 180 degrees. (previously 575)
+void uTurn(double distance_right) {
+  if(distance_right <= 8) {
+    // mBot turns to the Left by 180 degrees (on the spot).
+    leftMotor.run(255); // Positive: Left wheel revolves backwards
+    rightMotor.run(255); // Positive: Right wheel revolves forwards
+    delay(590);  // Keep turning until turn is 180 degrees. (previously 575)
 
-  // After turn, stop motors and wait for a short duration for mBot to stabilise.
-  leftMotor.stop();
-  rightMotor.stop();
+    // After turn, stop motors and wait for a short duration for mBot to stabilise.
+    // leftMotor.stop();
+    // rightMotor.stop();
 
-  leftMotor.run(-255); // Negative: wheel turns anti-clockwise
-  rightMotor.run(255); // Positive: wheel turns clockwise
-  delay(30);
+    // leftMotor.run(-255); // Negative: wheel turns anti-clockwise
+    // rightMotor.run(255); // Positive: wheel turns clockwise
+    // delay(30);
+  }else {
+    // mBot turns to the Right by 180 degrees (on the spot).
+    leftMotor.run(-255); // Positive: Left wheel revolves forwards
+    rightMotor.run(-255); // Positive: Right wheel revolves backwards
+    delay(590);  // Keep turning until turn is 180 degrees. (previously 575)
+
+    // After turn, stop motors and wait for a short duration for mBot to stabilise.
+    // leftMotor.stop();
+    // rightMotor.stop();
+
+    // leftMotor.run(-255); // Negative: wheel turns anti-clockwise
+    // rightMotor.run(255); // Positive: wheel turns clockwise
+    // delay(30);
+  }
 
   //delay(300);
 }
@@ -93,18 +114,37 @@ void successiveLeft() {
   turnLeft();
 
   // 2. Then, move mBot forward by one tile.
-  leftMotor.run(-255); // Negative: Left wheel revolves forwards
-  rightMotor.run(255); // Positive: Right wheel revolves forwards
-  delay(730);  // PREV VAL:740
+  moveForward();
+  delay(700);  // PREV VAL:720/700
 
   // 3. After moving forward, stop motors and wait for a short duration for mBot to stabilise.
   leftMotor.stop();
   rightMotor.stop();
-  delay(20);
+  delay(50);
 
   // 4. Finally, turn mBot to the left by 90 degrees again.
   turnLeft();
 }
+
+void successiveLeft2() {
+  // 1. Turn mBot to the left by 90 degrees.
+  turnLeft();
+
+  // 2. Then, move mBot forward by one tile.
+  moveForward();
+  delay(710);  // PREV VAL:720/700
+
+  // 3. After moving forward, stop motors and wait for a short duration for mBot to stabilise.
+  leftMotor.stop();
+  rightMotor.stop();
+  delay(50);
+
+  // 4. Finally, turn mBot to the left by 90 degrees again.
+  turnLeft();
+}
+
+
+
 
 // 🔵 Called when BLUE detected at waypoint.
 // mbot does Two successive Right-turns in two grids
@@ -113,14 +153,13 @@ void successiveRight() {
   turnRight();
 
   // 2. Then, move mBot forward by one tile.
-  leftMotor.run(-255); // Negative: Left wheel revolves forwards
-  rightMotor.run(255); // Positive: Right wheel revolves forwards
-  delay(850);  // PREV VAL: 600
+  moveForward();
+  delay(800);  // PREV VAL: 600
 
   // 3. After moving forward, stop motors and wait for a short duration for mBot to stabilise.
   leftMotor.stop();
   rightMotor.stop();
-  delay(20);
+  delay(50);
 
   // 4. Finally, turn mBot to the right by 90 degrees again.
   turnRight();
@@ -304,39 +343,44 @@ int detectColour(){
   // Shine Red, read LDR after some delay
   shineRed();
   delay(RGBWait);
-  colourArray[0] = getAvgReading(5);
-  colourArray[0] = (colourArray[0] - blackArray[0])/(greyDiff[0])*255;
-  delay(RGBWait);
-  //Serial.println(int(colourArray[0]));
-
-  // Shine Green, read LDR after some delay
+  colourArray[0] = getAvgReading(6); //originally 5
   shineGreen();
   delay(RGBWait);
-  colourArray[1] = getAvgReading(5);
-  colourArray[1] = (colourArray[1] - blackArray[1])/(greyDiff[1])*255;
-  delay(RGBWait);
-  //Serial.println(int(colourArray[1]));
-
-  // Shine Blue, read LDR after some delay
+  colourArray[1] = getAvgReading(6);
   shineBlue();
   delay(RGBWait);
-  colourArray[2] = getAvgReading(5);
-  colourArray[2] = (colourArray[2] - blackArray[2])/(greyDiff[2])*255;
-  delay(RGBWait);
-  //Serial.println(int(colourArray[2]));
+  colourArray[2] = getAvgReading(6);
+  //delay(RGBWait);
   analogWrite(A,LOW); //Setting A0 to High/Low
   analogWrite(B,LOW); //Setting A0 to High/Low
 
+
+  colourArray[0] = (colourArray[0] - blackArray[0])/(greyDiff[0])*255;
+  //delay(RGBWait);
+  Serial.println(int(colourArray[0]));
+
+  // Shine Green, read LDR after some delay
+
+  colourArray[1] = (colourArray[1] - blackArray[1])/(greyDiff[1])*255;
+  //delay(RGBWait);
+  Serial.println(int(colourArray[1]));
+
+  // Shine Blue, read LDR after some delay
+  colourArray[2] = (colourArray[2] - blackArray[2])/(greyDiff[2])*255;
+  //delay(RGBWait);
+  Serial.println(int(colourArray[2]));
+
   // Red [0], Green [1], Blue [2]
 
-  // If R, G and B near 255 = WHITE
-  if (colourArray[0] >= 190 && colourArray[1] >= 190 && colourArray[2] >= 190) {
+  // If R, G and B near 255 = WHITE (prev 190)
+  if (colourArray[0] >= 240 && colourArray[1] >= 240 && colourArray[2] >= 240) {
     //Serial.println("ITS WHITE!!!");
+    led.setColor(255, 255, 255); // set both LEDs to white colour
+    led.show(); // Must use .show() to make new colour take effect
     return detectWhite; // Stops
   }
   // When Green is MAX
   if (colourArray[1] > colourArray[0] && colourArray[1] > colourArray[2]) {
-    double ratio = colourArray[1]/colourArray[2]; // Green/Blue ratio
     // Using Red as differentiator
     // if (colourArray[0] >= 130) {
     //   Serial.println("ITS PURPLE!!!");
@@ -348,26 +392,48 @@ int detectColour(){
     // } 
     //else {
       //Serial.println("ITS GREEN!!!");
-      return detectGreen; // Right turn
+        if(colourArray[2] <= 230) {
+          led.setColor(0, 255, 0); // set both LEDs to white colour
+          led.show(); // Must use .show() to make new colour take effect
+          return detectGreen; // Right turn
+        }else if(colourArray[0] >= 180) { //120 prev 280
+      //Serial.println("ITS PURPLE!!!");
+        led.setColor(128, 0, 128); // set both LEDs to white colour
+        led.show(); // Must use .show() to make new colour take effect
+        return detectPurple;
+    }else {
+        led.setColor(0, 0, 255); // set both LEDs to white colour
+        led.show(); // Must use .show() to make new colour take effect
+      //Serial.println("ITS BLUE!!!");
+      return detectBlue;
+    }
     //}
   }
   // When Red is MAX
   else if (colourArray[0] > colourArray[1] && colourArray[0] > colourArray[2]) {
       //Use blue/green ratio instead because green/red ratio is too close to compare
       double ratio = colourArray[2]/colourArray[1]; //  ̶G̶r̶e̶e̶n̶/̶R̶e̶d̶ ̶r̶a̶t̶i̶o̶  blue/green ratio
-      if (colourArray[1] <= 165) {
+      if (colourArray[1] <= 120) { //Originally 165
         //Serial.println("ITS RED!!!");
+        led.setColor(255, 0, 0); // set both LEDs to white colour
+        led.show(); // Must use .show() to make new colour take effect
         return detectRed; // Left turn
       } 
       else {
         //Serial.println("ITS ORANGE!!!");
+        led.setColor(255, 165, 0); // set both LEDs to white colour
+        led.show(); // Must use .show() to make new colour take effect
         return detectOrange; // U-Turn
       }
   }else if(colourArray[2] > colourArray[0] && colourArray[2] > colourArray[1]) {
-    if(colourArray[0] >= 100) { //120
+    if(colourArray[0] >= 180) { //120 prev 280
       //Serial.println("ITS PURPLE!!!");
+        led.setColor(128, 0, 128); // set both LEDs to white colour
+        led.show(); // Must use .show() to make new colour take effect
       return detectPurple;
     }else {
+        led.setColor(0, 0, 255); // set both LEDs to white colour
+        led.show(); // Must use .show() to make new colour take effect
       //Serial.println("ITS BLUE!!!");
       return detectBlue;
     }
@@ -383,7 +449,7 @@ double ultrasonic_dist() {
   digitalWrite(ULTRASONIC, LOW);
   delayMicroseconds(2);
   digitalWrite(ULTRASONIC, HIGH);
-  delayMicroseconds(10);
+  delayMicroseconds(10); //originally 10
   digitalWrite(ULTRASONIC, LOW);
   pinMode(ULTRASONIC, INPUT);
   float duration = pulseIn(ULTRASONIC, HIGH, ULTRASONIC_TIMEOUT);
@@ -406,6 +472,7 @@ void setup(){
   // Configure pinMode for A0, A1, A2, A3
   // Setting LED_Array
   // Red [0], Green [1], Blue [2]
+  led.setpin(13);
   LED_Array[0] = {255, 255};
   LED_Array[1] = {255, 0};
   LED_Array[2] = {0, 255};
@@ -422,7 +489,7 @@ void setup(){
   pinMode(A7, INPUT); // Setup A7 as input for the push button
   //celebrate();
 
-  //Serial.begin(9600);
+  Serial.begin(9600);
   //setBalance();
   // whiteArray[0] = 991;
   // whiteArray[1] = 993;  // whiteArray[2] = 995;
@@ -449,18 +516,33 @@ void setup(){
   // greyDiff[2] = 237;
 
 
-  whiteArray[0] = 984;
-  whiteArray[1] = 999;
-  whiteArray[2] = 997;
+  // whiteArray[0] = 984;
+  // whiteArray[1] = 999;
+  // whiteArray[2] = 997;
 
-  blackArray[0] = 957;
-  blackArray[1] = 917;
-  blackArray[2] = 943;
+  // blackArray[0] = 957;
+  // blackArray[1] = 917;
+  // blackArray[2] = 943;
   
-  greyDiff[0] = 27;
-  greyDiff[1] = 82;
-  greyDiff[2] = 54;
+  // greyDiff[0] = 27;
+  // greyDiff[1] = 82;
+  // greyDiff[2] = 54;
+
+  //Calibration 15 Nov
+  whiteArray[0] = 988;
+  whiteArray[1] = 1009;
+  whiteArray[2] = 992;
+
+  blackArray[0] = 908;
+  blackArray[1] = 987;
+  blackArray[2] = 906;
+  
+  greyDiff[0] = 80;
+  greyDiff[1] = 22;
+  greyDiff[2] = 86;
+
   //celebrate();
+
 }
 
 // void celebrate() Code for playing celebratory tune
@@ -490,14 +572,79 @@ void loop()
 
   if (analogRead(A7) < 100) { // If push button is pushed, the value will be very low
     status = 1 - status; // Toggle status
-    //delay(500); // Delay 500ms so that a button push won't be counted multiple times.
+    int val = analogRead(LIGHTSENSOR);
+    //Serial.println(val);
+    //Check the Light sensor
+    //If light sensor is covered, then switch to other mode, otherwise carry on current
+    //value ranges from 0 to 1023
+    if(val < 700) {
+      //Do pre-loaded stuff here
+      //Set led colour
+      led.setColor(255, 0, 0); // set both LEDs to white colour
+      led.show(); // Must use .show() to make new colour take effect
+      int count = 0;
+      while(count < 8) {
+        double distance_right = ultrasonic_dist();
+        float dx = distance_right - 8;
+        moveForward();
+
+        if (distance_right < 9 && distance_right != -1) { // Left (11)
+          leftMotor.run(-255 - dx*15); // Negative: wheel turns anti-clockwise
+          rightMotor.run(255); // Positive: wheel turns clockwise
+          delay(50); // 5
+        }
+        else if(distance_right > 11 && distance_right <= 16) { // Right (original:20 -> 16)
+          leftMotor.run(-255); // Negative: wheel turns anti-clockwise
+          rightMotor.run(255 - dx*15); // Positive: wheel turns clockwise
+          delay(50);
+        }
+
+        int sensorState = lineFollower.readSensors(); 
+        if(sensorState != S1_OUT_S2_OUT) {
+          leftMotor.stop(); // Left wheel Stop
+          rightMotor.stop(); // Right wheel stop
+          if(count == 7) {
+            //White
+            delay(100);
+            led.setColor(255,255,255);
+            led.show();
+            leftMotor.stop();
+            rightMotor.stop();
+            celebrate(); // play "Never Gonna Give You Up"
+            delay(100000);
+          }
+
+          if(count == 0) {delay(100);led.setColor(255,0,0);led.show();turnLeft();count++;continue;}
+          else if(count == 1) {delay(100);led.setColor(255,0,0);led.show();turnLeft();count++;continue;}
+          else if(count == 2) {delay(100);led.setColor(0,0,255);led.show();successiveRight();count++;continue;}
+          else if(count == 3) {delay(100);led.setColor(255, 165, 0);led.show();uTurn(distance_right);count++;continue;}
+          else if(count == 4) {delay(100);led.setColor(128, 0, 128);led.show();successiveLeft2();count++;continue;}
+          else if(count == 5) {delay(100);led.setColor(0,255,0);led.show();turnRight();count++;continue;}
+          else if(count == 6) {delay(100);led.setColor(0,255,0);led.show();turnRight();count++;continue;}
+        }
+      }
+
+    }
+    //delay(500); // Delay 500ms so that a button push won't be counted multiple times
   }
 
   if(status == 1) {
     double distance_right = ultrasonic_dist();
-    leftMotor.run(-255); // Negative: wheel turns anti-clockwise
-    rightMotor.run(255); // Positive: wheel turns clockwise
-    if(distance_right < 10 && distance_right != -1) {
+    float dx = distance_right - 8;
+     moveForward();
+
+    if (distance_right < 9 && distance_right != -1) { // Left (11)
+      leftMotor.run(-255 - dx*15); // Negative: wheel turns anti-clockwise
+      rightMotor.run(255); // Positive: wheel turns clockwise
+      delay(50); // 5
+    }
+    else if(distance_right > 11 && distance_right <= 16) { // Right (original:20 -> 16)
+      leftMotor.run(-255); // Negative: wheel turns anti-clockwise
+      rightMotor.run(255 - dx*15); // Positive: wheel turns clockwise
+      delay(50);
+    }
+
+    /*if(distance_right < 10 && distance_right != -1) {
       //Too close to right, move left
       leftMotor.run(-170); // Left wheel stops
       rightMotor.run(255); // Right wheel go forward
@@ -511,7 +658,7 @@ void loop()
       rightMotor.run(170); // Right wheel stops
       delay(5);
       //dist_from_left = ultrasonic_dist();
-  }
+  }*/
 
 
   //   if(distance_right < 8.0 && distance_right > 0.1) { /** too close to right correct to the left, corrects more if the robot is closer to the wall */
@@ -595,7 +742,7 @@ void loop()
     if (sensorState != S1_OUT_S2_OUT) { // run colour sensor when mbot stops at blackline
       leftMotor.stop(); // Left wheel Stop
       rightMotor.stop(); // Right wheel stop
-      delay(500);
+      //delay(200); //Originally 500
 
       enum Colours colour = detectColour();
       switch(colour) {
@@ -609,7 +756,7 @@ void loop()
           break;
         case detectOrange:
           //Serial.println("ORANGE DETECTED!!!!");
-          uTurn();
+          uTurn(distance_right);
           break;
         case detectPurple:
           //Serial.println("PURPLE DETECTED!!!!");
@@ -623,7 +770,7 @@ void loop()
           leftMotor.stop();
           rightMotor.stop();
           celebrate(); // play "Never Gonna Give You Up"
-          delay(5000);
+          delay(100000);
           break;
       };
     }
