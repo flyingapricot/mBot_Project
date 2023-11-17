@@ -157,9 +157,9 @@ int blue = 0;
 // Floats to hold colour arrays
 float colourArray[] = {0,0,0};
 //White and Blackarray vals determined experimentally
-const float whiteArray[] = {988,1009,992};
-const float blackArray[] = {908,987,906};
-const float greyDiff[] = {80,22,86};
+float whiteArray[] = {988,1009,992};
+float blackArray[] = {908,987,906};
+float greyDiff[] = {80,22,86};
 
 enum Colours {
   detectPurple,

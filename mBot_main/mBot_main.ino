@@ -115,6 +115,55 @@ int getAvgReading(int times) {
   return total/times;
 }
 
+void setBalance() {
+  //Set white balance
+  Serial.println("Put White Sample For Calibration ...");
+  delay(5000);
+
+  //scan the white sample.
+  //go through one colour at a time, set the maximum reading for each colour
+  //--red, green and blue to the white array
+  for(int i =0;i<3;i++) {
+    digitalWrite(A,LED_Array[i].A_val); //Setting A0 to High/Low
+    digitalWrite(B,LED_Array[i].B_val); //Setting A0 to High/Low
+    delay(RGBWait);
+    whiteArray[i] = getAvgReading(5); //Get average of 5 readings and store in white
+    Serial.print("White Array ");
+    Serial.print(i);
+    Serial.print(" Value: ");
+    Serial.println(whiteArray[i]);
+  }
+
+  Serial.println("Put Black Sample For Calibration ...");
+  delay(5000); //delay for five seconds for getting sample ready
+  
+  //Next, scan black sample
+  //go through one colour at a time, set the maximum reading for each colour
+  //--red, green and blue to the black array
+  for(int i =0;i<3;i++) {
+    digitalWrite(A,LED_Array[i].A_val); //Setting A0 to High/Low
+    digitalWrite(B,LED_Array[i].B_val); //Setting A0 to High/Low
+    delay(RGBWait);
+
+    blackArray[i] = getAvgReading(5); //Get average of 5 readings and store in white
+    Serial.print("Black Array ");
+    Serial.print(i);
+    Serial.print(" Value: ");
+    Serial.println(blackArray[i]);
+
+    //the difference between the maximum and the minimum gives the range
+    greyDiff[i] = whiteArray[i] - blackArray[i];
+    Serial.print("Grey Array ");
+    Serial.print(i);
+    Serial.print(" Value: ");
+    Serial.println(greyDiff[i]);
+
+  }
+
+  Serial.println("Colour Sensor Is Ready.");
+}
+
+
 void celebrate() {
   int notes = sizeof(melody) / sizeof(melody[0]) / 2;
 
