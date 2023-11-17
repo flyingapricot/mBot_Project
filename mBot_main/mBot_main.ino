@@ -304,15 +304,16 @@ void loop()
 
   if(status == 1) {
     double distance_right = ultrasonic_dist();
+    int distance_left = shineIR(); 
     float dx = distance_right - 8;
-     moveForward();
+    moveForward();
 
     if (distance_right < 9 && distance_right != -1) { // Left
       leftMotor.run(-255 - dx*15); // Negative: wheel turns anti-clockwise
       rightMotor.run(255); // Positive: wheel turns clockwise
       delay(50);
     }
-    else if(distance_right > 11 && distance_right <= 16) { // Right
+    else if(distance_left < 9) { // Right
       leftMotor.run(-255); // Negative: wheel turns anti-clockwise
       rightMotor.run(255 - dx*15); // Positive: wheel turns clockwise
       delay(50);
