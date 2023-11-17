@@ -2,7 +2,6 @@
 #include "definitons.h"
 
 /** Start of Music related Defintions **/
-
 // Increasing tempo makes the song faster (BPM)
 int tempo = 150;
 // Melody for "Never gonna give you up"
@@ -14,9 +13,38 @@ int melody[] = {
   NOTE_D5,4, NOTE_E5,8, NOTE_CS5,-8, NOTE_B4,16, NOTE_A4,8, NOTE_A4,8, NOTE_A4,8, 
   NOTE_E5,4, NOTE_D5,2, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16,
  };
-
 /** End of Music related Defintions **/
 
+
+void celebrate() {
+  int notes = sizeof(melody) / sizeof(melody[0]) / 2;
+
+  // Calculates the duration of a whole note in milliseconds
+  int wholenote = (60000 * 4) / tempo;
+
+  int divider = 0, noteDuration = 0;
+  for (int thisNote = 0; thisNote < notes * 2; thisNote = thisNote + 2) {
+    // Calculates the duration of each note
+    divider = melody[thisNote + 1];
+    if (divider > 0) {
+      // Regular note, just proceed
+      noteDuration = (wholenote) / divider;
+    } else if (divider < 0) {
+      // Dotted notes are represented with negative durations!!
+      noteDuration = (wholenote) / abs(divider);
+      noteDuration *= 1.5; // Increases the duration in half for dotted notes
+    }
+
+    // Only play the note for 90% of the duration, leaving remaining 10% as a pause
+    buzzer.tone(melody[thisNote], noteDuration * 0.9);
+
+    // Wait for the specified duration before playing the next note.
+    delay(noteDuration);
+
+    // Stop the waveform generation before the next note.
+    buzzer.noTone();
+  }
+}
 
 MeDCMotor leftMotor(M1); // Assigning leftMotor to port M1
 MeDCMotor rightMotor(M2); // Assigning RightMotor to port M2
@@ -33,107 +61,107 @@ struct LEDPair {
 };
 
 
-/** Start of mBot movement functions**/
-
+/** Start of mBot Movement functions**/
 void moveForward() {
   leftMotor.run(-255); // Negative: Left wheel revolves forwards
   rightMotor.run(255); // Positive: Right wheel revolves forwards
 }
 
-// ⚪ Called when WHITE detected at waypoint.
-// mBot stops and plays victory tune.
+// ⚪ Called when WHITE detected at waypoint
+// mBot stops and plays victory tune
 void stopRobot() {
   leftMotor.stop();
   rightMotor.stop();
 }
 
-// 🔴 Called when RED detected at waypoint.
-// mBot turns to the Left by 90 degrees (on the spot).
+// 🔴 Called when RED detected at waypoint
+// mBot turns to the Left by 90 degrees (on the spot)
 void turnLeft() {
   leftMotor.run(255); // Positive: Left wheel revolves backwards
   rightMotor.run(255); // Positive: Right wheel revolves forwards
-  delay(300); //Previously 320/310
+  delay(300); 
   leftMotor.stop();
   rightMotor.stop();
 }
 
-// 🟢 Called when GREEN detected at waypoint.
-//  mBot Turns to the Right by 90 degrees (on the spot).
+// 🟢 Called when GREEN detected at waypoint
+//  mBot Turns to the Right by 90 degrees (on the spot)
 void turnRight() {
   leftMotor.run(-255); // Negative: Left wheel revolves forwards
   rightMotor.run(-255); // Negative: Right wheel revolves backwards
-  delay(325); //Original: 315
+  delay(325); 
 }
 
-// 🟠 Called when ORANGE detected at waypoint.
+// 🟠 Called when ORANGE detected at waypoint
 // mBot does 180° turn within the same grid  
 void uTurn(double distance_right) {
   if(distance_right <= 8) {
-    // mBot turns to the Left by 180 degrees (on the spot).
+    // mBot turns to the Left by 180 degrees (on the spot)
     leftMotor.run(255); // Positive: Left wheel revolves backwards
     rightMotor.run(255); // Positive: Right wheel revolves forwards
-    delay(590);  // Keep turning until turn is 180 degrees. (previously 575)
-  }else {
-    // mBot turns to the Right by 180 degrees (on the spot).
+    delay(590); 
+  } else {
+    // mBot turns to the Right by 180 degrees (on the spot)
     leftMotor.run(-255); // Positive: Left wheel revolves forwards
     rightMotor.run(-255); // Positive: Right wheel revolves backwards
-    delay(590);  // Keep turning until turn is 180 degrees. (previously 575)
+    delay(590); 
   }
 }
 
-// 🟣 Called when PURPLE detected at waypoint.
+// 🟣 Called when PURPLE detected at waypoint
 // mbot does Two successive Left-turns in two grids
 void successiveLeft() {
-  // 1. Turn mBot to the left by 90 degrees.
+  // Turn mBot to the left by 90 degrees.
   turnLeft();
 
-  // 2. Then, move mBot forward by one tile.
+  // Then, move mBot forward by one tile.
   moveForward();
-  delay(700);  // PREV VAL:720/700
+  delay(700); 
 
-  // 3. After moving forward, stop motors and wait for a short duration for mBot to stabilise.
+  // After moving forward, stop motors and wait for a short duration for mBot to stabilise.
   leftMotor.stop();
   rightMotor.stop();
   delay(50);
 
-  // 4. Finally, turn mBot to the left by 90 degrees again.
+  // Finally, turn mBot to the left by 90 degrees again.
   turnLeft();
 }
 
 // 🔵 Called when BLUE detected at waypoint.
 // mbot does Two successive Right-turns in two grids
 void successiveRight() {
-  // 1. Turn mBot to the right by 90 degrees.
+  // Turn mBot to the right by 90 degrees.
   turnRight();
 
-  // 2. Then, move mBot forward by one tile.
+  // Then, move mBot forward by one tile.
   moveForward();
   delay(800);  // PREV VAL: 600
 
-  // 3. After moving forward, stop motors and wait for a short duration for mBot to stabilise.
+  // After moving forward, stop motors and wait for a short duration for mBot to stabilise.
   leftMotor.stop();
   rightMotor.stop();
   delay(50);
 
-  // 4. Finally, turn mBot to the right by 90 degrees again.
+  // Finally, turn mBot to the right by 90 degrees again.
   turnRight();
 }
-/** End of mBot movement functions**/
+/** End of mBot Movement functions **/
 
 
-/** Start of LDR Related Definitions**/
-
-//Green LED(A - H, B - L) at Y1, Blue LED at Y2(A- L, B -H) , Red LED at Y3 (A- H, B -H)
+/** Start of LDR Related Definitions **/
+// Red LED at Y3 (A- H, B -H)
+// Green LED Y1 (A - H, B - L)
+// Blue LED at Y2 (A- L, B -H)
 LEDPair LED_Array[3];
 
 bool do_color_decode = false;
 
-//placeholders for colour detected
+// Placeholders for colour detected
 int red = 0;
 int green = 0;
 int blue = 0;
 
-//floats to hold colour arrays
+// Floats to hold colour arrays
 float colourArray[] = {0,0,0};
 float whiteArray[] = {0,0,0};
 float blackArray[] = {0,0,0};
@@ -147,44 +175,11 @@ enum Colours {
   detectOrange,
   detectWhite
 };
+/** End of LDR Related Definitions **/
 
-
-/** End of LDR Related Variables **/
-
-void celebrate() {
-  int notes = sizeof(melody) / sizeof(melody[0]) / 2;
-
-  // this calculates the duration of a whole note in ms
-  int wholenote = (60000 * 4) / tempo;
-
-  int divider = 0, noteDuration = 0;
-  for (int thisNote = 0; thisNote < notes * 2; thisNote = thisNote + 2) {
-    // calculates the duration of each note
-    divider = melody[thisNote + 1];
-    if (divider > 0) {
-      // regular note, just proceed
-      noteDuration = (wholenote) / divider;
-    } else if (divider < 0) {
-      // dotted notes are represented with negative durations!!
-      noteDuration = (wholenote) / abs(divider);
-      noteDuration *= 1.5; // increases the duration in half for dotted notes
-    }
-
-    // we only play the note for 90% of the duration, leaving 10% as a pause
-    buzzer.tone(melody[thisNote], noteDuration * 0.9);
-
-    // Wait for the specief duration before playing the next note.
-    delay(noteDuration);
-
-    // stop the waveform generation before the next note.
-    buzzer.noTone();
-  }
-
-
-}
 
 int shineIR() {
-  //Power on IR Emitter
+  // Power on IR Emitter
   analogWrite(A,LOW); //Setting A0 to High/Low
   analogWrite(B,LOW); //Setting A1 to High/Low
 
@@ -193,62 +188,62 @@ int shineIR() {
   int ans = analogRead(IRD);
 
   return ans;
-
 }
 
-
-int getAvgReading(int times){
-  //find the average reading for the requested number of times of scanning LDR
+int getAvgReading(int times) {
+  // Find the average reading for the requested number of times of scanning LDR
   int reading;
   int total = 0;
-  //take the reading as many times as requested and add them up
+  // Take the reading as many times as requested and add them up
   for(int i = 0;i < times;i++){
     reading = analogRead(LDR);
     total = reading + total;
     delay(LDRWait);
   }
-  //calculate the average and return it
+  // Calculate the average and return it
   return total/times;
 }
 
+
 /** Start of LDR Colour Calibration**/
 void setBalance() {
-  //Set white balance
+  // Set White balance
   Serial.println("Put White Sample For Calibration ...");
   delay(5000);
 
-  //scan the white sample.
-  //go through one colour at a time, set the maximum reading for each colour
-  //--red, green and blue to the white array
-  for(int i =0;i<3;i++) {
+  // Scan the white sample.
+  // Go through one colour at a time: Red, Green and Blue
+  // Set the maximum reading for each colour into the white array
+  for(int i = 0; i < 3; i++) {
     digitalWrite(A,LED_Array[i].A_val); 
     digitalWrite(B,LED_Array[i].B_val);
     delay(RGBWait);
-    whiteArray[i] = getAvgReading(5); //Get average of 5 readings and store in white
+    whiteArray[i] = getAvgReading(5); // Get average of 5 readings and store in white array
     Serial.print("White Array ");
     Serial.print(i);
     Serial.print(" Value: ");
     Serial.println(whiteArray[i]);
   }
 
+  // Set Black balance
   Serial.println("Put Black Sample For Calibration ...");
-  delay(5000); //delay for five seconds for getting sample ready
+  delay(5000); // Delay for five seconds to get black sample ready
   
-  //Next, scan black sample
-  //go through one colour at a time, set the maximum reading for each colour
-  //--red, green and blue to the black array
-  for(int i =0;i<3;i++) {
-    digitalWrite(A,LED_Array[i].A_val); //Setting A0 to High/Low
-    digitalWrite(B,LED_Array[i].B_val); //Setting A0 to High/Low
+  //Next, scan the black sample
+  // Go through one colour at a time: Red, Green and Blue
+  // Set the maximum reading for each colour into the black array
+  for(int i = 0; i < 3; i++) {
+    digitalWrite(A,LED_Array[i].A_val); // Setting A0 to High/Low
+    digitalWrite(B,LED_Array[i].B_val); // Setting A0 to High/Low
     delay(RGBWait);
 
-    blackArray[i] = getAvgReading(5); //Get average of 5 readings and store in white
+    blackArray[i] = getAvgReading(5); // Get average of 5 readings and store in black
     Serial.print("Black Array ");
     Serial.print(i);
     Serial.print(" Value: ");
     Serial.println(blackArray[i]);
 
-    //the difference between the maximum and the minimum gives the range
+    // Difference between the maximum (white) and minimum (Black) gives the range
     greyDiff[i] = whiteArray[i] - blackArray[i];
     Serial.print("Grey Array ");
     Serial.print(i);
@@ -277,29 +272,36 @@ void shineBlue() {
   analogWrite(B,LED_Array[2].B_val); 
 }
 
-int detectColour(){
-  // Red [0], Green [1], Blue [2]
+// Red [0], Green [1], Blue [2]
+int detectColour() {
+  
   // Shine Red, read LDR after some delay
   shineRed();
   delay(RGBWait);
-  colourArray[0] = getAvgReading(6);
+  colourArray[0] = getAvgReading(5);
+  
+  // Shine Green, read LDR after some delay
   shineGreen();
   delay(RGBWait);
-  colourArray[1] = getAvgReading(6);
+  colourArray[1] = getAvgReading(5);
+  
+  // Shine Blue, read LDR after some delay  
   shineBlue();
   delay(RGBWait);
-  colourArray[2] = getAvgReading(6);
+  colourArray[2] = getAvgReading(5);
 
   analogWrite(A,LOW); 
   analogWrite(B,LOW);
 
-
+  // Red Array values
   colourArray[0] = (colourArray[0] - blackArray[0])/(greyDiff[0])*255;
   Serial.println(int(colourArray[0]));
-
+  
+  // Green Array values
   colourArray[1] = (colourArray[1] - blackArray[1])/(greyDiff[1])*255;
   Serial.println(int(colourArray[1]));
-
+  
+  // Blue Array values
   colourArray[2] = (colourArray[2] - blackArray[2])/(greyDiff[2])*255;
   Serial.println(int(colourArray[2]));
 
