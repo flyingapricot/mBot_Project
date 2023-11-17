@@ -1,10 +1,11 @@
 #include <MeMCore.h>
 #include "definitons.h"
 
-/**Start of Music related Defintions **/
-// change this to make the song slower or faster
+/** Start of Music related Defintions **/
+
+// Increasing tempo makes the song faster (BPM)
 int tempo = 150;
-//Melody for Never gonna give you up
+// Melody for "Never gonna give you up"
 int melody[] = {
   NOTE_D5,16, NOTE_B4,16,
   NOTE_FS5,-8, NOTE_FS5,-8, NOTE_E5,-4, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16,
@@ -14,39 +15,36 @@ int melody[] = {
   NOTE_E5,4, NOTE_D5,2, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16,
  };
 
-/**End of Music related Defintions **/
+/** End of Music related Defintions **/
 
 
-MeDCMotor leftMotor(M1); // assigning leftMotor to port M1
-MeDCMotor rightMotor(M2); // assigning RightMotor to port M2
-MeLineFollower lineFollower(PORT_2); // assigning lineFollower to RJ25 port 2
-MeBuzzer buzzer; // create the buzzer object
+MeDCMotor leftMotor(M1); // Assigning leftMotor to port M1
+MeDCMotor rightMotor(M2); // Assigning RightMotor to port M2
+MeLineFollower lineFollower(PORT_2); // Assigning lineFollower to RJ25 port 2
+MeBuzzer buzzer; // Create the buzzer object
 MeRGBLed led(0,30); // Based on hardware connections on mCore; cannot change
 
-bool adjustLeft;
-bool adjustRight;
+int status = 0; // Global status; 0 = Do nothing, 1 = mBot runs
 
-
-int status = 0; // global status; 0 = do nothing, 1 = mBot runs
-
-//High Low Pair used to specifically control each R, G and B LED by varying A and B's Analog Signal
+// High Low Pair used to specifically control each R, G and B LED by varying A and B's Analog Signal
 struct LEDPair {
   uint8_t A_val;
   uint8_t B_val;
 };
 
+
 /** Start of mBot movement functions**/
+
+void moveForward() {
+  leftMotor.run(-255); // Negative: Left wheel revolves forwards
+  rightMotor.run(255); // Positive: Right wheel revolves forwards
+}
 
 // ⚪ Called when WHITE detected at waypoint.
 // mBot stops and plays victory tune.
 void stopRobot() {
   leftMotor.stop();
   rightMotor.stop();
-}
-
-void moveForward() {
-  leftMotor.run(-255); // Negative: wheel turns anti-clockwise
-  rightMotor.run(255); // Positive: wheel turns clockwise
 }
 
 // 🔴 Called when RED detected at waypoint.
@@ -101,26 +99,6 @@ void successiveLeft() {
   // 4. Finally, turn mBot to the left by 90 degrees again.
   turnLeft();
 }
-
-void successiveLeft2() {
-  // 1. Turn mBot to the left by 90 degrees.
-  turnLeft();
-
-  // 2. Then, move mBot forward by one tile.
-  moveForward();
-  delay(710);  // PREV VAL:720/700
-
-  // 3. After moving forward, stop motors and wait for a short duration for mBot to stabilise.
-  leftMotor.stop();
-  rightMotor.stop();
-  delay(50);
-
-  // 4. Finally, turn mBot to the left by 90 degrees again.
-  turnLeft();
-}
-
-
-
 
 // 🔵 Called when BLUE detected at waypoint.
 // mbot does Two successive Right-turns in two grids
