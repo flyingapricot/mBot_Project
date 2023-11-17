@@ -1,6 +1,8 @@
 #ifndef DEFINITIONS_H
 #define DEFINITIONS_H
 
+//This file contains all definitions and constant arrays/global vals
+
 //Start of defintions
 #define ULTRASONIC 12
 #define ULTRASONIC_TIMEOUT 2000 // Max microseconds to wait; choose according to max distance of wall
@@ -96,6 +98,21 @@
 #define NOTE_DS8 4978
 #define REST      0
 
+/** Start of Music related Defintions **/
+// Increasing tempo makes the song faster (BPM)
+int tempo = 150;
+// Melody for "Never gonna give you up"
+int melody[] = {
+  NOTE_D5,16, NOTE_B4,16,
+  NOTE_FS5,-8, NOTE_FS5,-8, NOTE_E5,-4, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16,
+
+  NOTE_E5,-8, NOTE_E5,-8, NOTE_D5,-8, NOTE_CS5,16, NOTE_B4,-8, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16, //18
+  NOTE_D5,4, NOTE_E5,8, NOTE_CS5,-8, NOTE_B4,16, NOTE_A4,8, NOTE_A4,8, NOTE_A4,8, 
+  NOTE_E5,4, NOTE_D5,2, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16,
+ };
+/** End of Music related Defintions **/
+
+
 //By varying the analog output of A and B (At Port 4), we can control each of the LEDs + IR Emitter
 #define A A0 //S1 (Pin 2 of Decoder)
 #define B A1 //S2 (Pin 3 of Decoder)
@@ -108,5 +125,52 @@
 #define LDRWait 15 //in milliseconds
 
 #define LIGHTSENSOR A6 // internally connected to analog pin A6 in mCore
+
+MeDCMotor leftMotor(M1); // Assigning leftMotor to port M1
+MeDCMotor rightMotor(M2); // Assigning RightMotor to port M2
+MeLineFollower lineFollower(PORT_2); // Assigning lineFollower to RJ25 port 2
+MeBuzzer buzzer; // Create the buzzer object
+MeRGBLed led(0,30); // Based on hardware connections on mCore; cannot change
+
+
+int status = 0; // Global status; 0 = Do nothing, 1 = mBot runs
+
+/** Start of LDR Related Definitions **/
+// Red LED at Y3 (A- H, B -H)
+// Green LED Y1 (A - H, B - L)
+// Blue LED at Y2 (A- L, B -H)
+
+// High Low Pair used to specifically control each R, G and B LED by varying A and B's Analog Signal
+struct LEDPair {
+  uint8_t A_val;
+  uint8_t B_val;
+};
+
+LEDPair LED_Array[3];
+bool do_color_decode = false;
+
+// Placeholders for colour detected
+int red = 0;
+int green = 0;
+int blue = 0;
+
+// Floats to hold colour arrays
+float colourArray[] = {0,0,0};
+//White and Blackarray vals determined experimentally
+const float whiteArray[] = {988,1009,992};
+const float blackArray[] = {908,987,906};
+const float greyDiff[] = {80,22,86};
+
+enum Colours {
+  detectPurple,
+  detectGreen,
+  detectBlue,
+  detectRed,
+  detectOrange,
+  detectWhite
+};
+/** End of LDR Related Definitions **/
+
+
 
 #endif

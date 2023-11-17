@@ -1,65 +1,6 @@
 #include <MeMCore.h>
 #include "definitons.h"
 
-/** Start of Music related Defintions **/
-// Increasing tempo makes the song faster (BPM)
-int tempo = 150;
-// Melody for "Never gonna give you up"
-int melody[] = {
-  NOTE_D5,16, NOTE_B4,16,
-  NOTE_FS5,-8, NOTE_FS5,-8, NOTE_E5,-4, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16,
-
-  NOTE_E5,-8, NOTE_E5,-8, NOTE_D5,-8, NOTE_CS5,16, NOTE_B4,-8, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16, //18
-  NOTE_D5,4, NOTE_E5,8, NOTE_CS5,-8, NOTE_B4,16, NOTE_A4,8, NOTE_A4,8, NOTE_A4,8, 
-  NOTE_E5,4, NOTE_D5,2, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16,
- };
-/** End of Music related Defintions **/
-
-
-void celebrate() {
-  int notes = sizeof(melody) / sizeof(melody[0]) / 2;
-
-  // Calculates the duration of a whole note in milliseconds
-  int wholenote = (60000 * 4) / tempo;
-
-  int divider = 0, noteDuration = 0;
-  for (int thisNote = 0; thisNote < notes * 2; thisNote = thisNote + 2) {
-    // Calculates the duration of each note
-    divider = melody[thisNote + 1];
-    if (divider > 0) {
-      // Regular note, just proceed
-      noteDuration = (wholenote) / divider;
-    } else if (divider < 0) {
-      // Dotted notes are represented with negative durations!!
-      noteDuration = (wholenote) / abs(divider);
-      noteDuration *= 1.5; // Increases the duration in half for dotted notes
-    }
-
-    // Only play the note for 90% of the duration, leaving remaining 10% as a pause
-    buzzer.tone(melody[thisNote], noteDuration * 0.9);
-
-    // Wait for the specified duration before playing the next note.
-    delay(noteDuration);
-
-    // Stop the waveform generation before the next note.
-    buzzer.noTone();
-  }
-}
-
-MeDCMotor leftMotor(M1); // Assigning leftMotor to port M1
-MeDCMotor rightMotor(M2); // Assigning RightMotor to port M2
-MeLineFollower lineFollower(PORT_2); // Assigning lineFollower to RJ25 port 2
-MeBuzzer buzzer; // Create the buzzer object
-MeRGBLed led(0,30); // Based on hardware connections on mCore; cannot change
-
-int status = 0; // Global status; 0 = Do nothing, 1 = mBot runs
-
-// High Low Pair used to specifically control each R, G and B LED by varying A and B's Analog Signal
-struct LEDPair {
-  uint8_t A_val;
-  uint8_t B_val;
-};
-
 
 /** Start of mBot Movement functions**/
 void moveForward() {
@@ -148,36 +89,6 @@ void successiveRight() {
 /** End of mBot Movement functions **/
 
 
-/** Start of LDR Related Definitions **/
-// Red LED at Y3 (A- H, B -H)
-// Green LED Y1 (A - H, B - L)
-// Blue LED at Y2 (A- L, B -H)
-LEDPair LED_Array[3];
-
-bool do_color_decode = false;
-
-// Placeholders for colour detected
-int red = 0;
-int green = 0;
-int blue = 0;
-
-// Floats to hold colour arrays
-float colourArray[] = {0,0,0};
-float whiteArray[] = {0,0,0};
-float blackArray[] = {0,0,0};
-float greyDiff[] = {0,0,0};
-
-enum Colours {
-  detectPurple,
-  detectGreen,
-  detectBlue,
-  detectRed,
-  detectOrange,
-  detectWhite
-};
-/** End of LDR Related Definitions **/
-
-
 int shineIR() {
   // Power on IR Emitter
   analogWrite(A,LOW); //Setting A0 to High/Low
@@ -204,57 +115,35 @@ int getAvgReading(int times) {
   return total/times;
 }
 
+void celebrate() {
+  int notes = sizeof(melody) / sizeof(melody[0]) / 2;
 
-/** Start of LDR Colour Calibration**/
-void setBalance() {
-  // Set White balance
-  Serial.println("Put White Sample For Calibration ...");
-  delay(5000);
+  // Calculates the duration of a whole note in milliseconds
+  int wholenote = (60000 * 4) / tempo;
 
-  // Scan the white sample.
-  // Go through one colour at a time: Red, Green and Blue
-  // Set the maximum reading for each colour into the white array
-  for(int i = 0; i < 3; i++) {
-    digitalWrite(A,LED_Array[i].A_val); 
-    digitalWrite(B,LED_Array[i].B_val);
-    delay(RGBWait);
-    whiteArray[i] = getAvgReading(5); // Get average of 5 readings and store in white array
-    Serial.print("White Array ");
-    Serial.print(i);
-    Serial.print(" Value: ");
-    Serial.println(whiteArray[i]);
+  int divider = 0, noteDuration = 0;
+  for (int thisNote = 0; thisNote < notes * 2; thisNote = thisNote + 2) {
+    // Calculates the duration of each note
+    divider = melody[thisNote + 1];
+    if (divider > 0) {
+      // Regular note, just proceed
+      noteDuration = (wholenote) / divider;
+    } else if (divider < 0) {
+      // Dotted notes are represented with negative durations!!
+      noteDuration = (wholenote) / abs(divider);
+      noteDuration *= 1.5; // Increases the duration in half for dotted notes
+    }
+
+    // Only play the note for 90% of the duration, leaving remaining 10% as a pause
+    buzzer.tone(melody[thisNote], noteDuration * 0.9);
+
+    // Wait for the specified duration before playing the next note.
+    delay(noteDuration);
+
+    // Stop the waveform generation before the next note.
+    buzzer.noTone();
   }
-
-  // Set Black balance
-  Serial.println("Put Black Sample For Calibration ...");
-  delay(5000); // Delay for five seconds to get black sample ready
-  
-  //Next, scan the black sample
-  // Go through one colour at a time: Red, Green and Blue
-  // Set the maximum reading for each colour into the black array
-  for(int i = 0; i < 3; i++) {
-    digitalWrite(A,LED_Array[i].A_val); // Setting A0 to High/Low
-    digitalWrite(B,LED_Array[i].B_val); // Setting A0 to High/Low
-    delay(RGBWait);
-
-    blackArray[i] = getAvgReading(5); // Get average of 5 readings and store in black
-    Serial.print("Black Array ");
-    Serial.print(i);
-    Serial.print(" Value: ");
-    Serial.println(blackArray[i]);
-
-    // Difference between the maximum (white) and minimum (Black) gives the range
-    greyDiff[i] = whiteArray[i] - blackArray[i];
-    Serial.print("Grey Array ");
-    Serial.print(i);
-    Serial.print(" Value: ");
-    Serial.println(greyDiff[i]);
-  }
-
-  Serial.println("Colour Sensor Is Ready.");
 }
-/** End of LDR Colour Calibration**/
-
 
 /** Start of LDR Colour Detection**/
 void shineRed() {    
@@ -290,6 +179,7 @@ int detectColour() {
   delay(RGBWait);
   colourArray[2] = getAvgReading(5);
 
+  //Turn the IR back on
   analogWrite(A,LOW); 
   analogWrite(B,LOW);
 
@@ -306,48 +196,48 @@ int detectColour() {
   Serial.println(int(colourArray[2]));
 
 
-  // If R, G and B near 240 = WHITE
+  // If R, G and B near 240 = ⚪
   if (colourArray[0] >= 240 && colourArray[1] >= 240 && colourArray[2] >= 240) {
-    led.setColor(255, 255, 255); // set both LEDs to white colour
+    led.setColor(255, 255, 255); // set both LEDs to ⚪
     led.show();
     return detectWhite;
   }
-  // When Green is MAX
+  // When 🟢 is MAX
   if (colourArray[1] > colourArray[0] && colourArray[1] > colourArray[2]) {
         if(colourArray[2] <= 230) {
-          led.setColor(0, 255, 0); // set both LEDs to green colour
+          led.setColor(0, 255, 0); // set both LEDs to 🟢
           led.show();
           return detectGreen; 
         }else if(colourArray[0] >= 180) {
-        led.setColor(128, 0, 128); // set both LEDs to purple colour
+        led.setColor(128, 0, 128); // set both LEDs to 🟣
         led.show();
         return detectPurple;
     }else {
-        led.setColor(0, 0, 255); // set both LEDs to blue colour
+        led.setColor(0, 0, 255); // set both LEDs to 🔵
         led.show();
       return detectBlue;
     }
     //}
   }
-  // When Red is MAX
+  // When 🔴 is MAX
   else if (colourArray[0] > colourArray[1] && colourArray[0] > colourArray[2]) {
       if (colourArray[1] <= 120) {
-        led.setColor(255, 0, 0); // set both LEDs to red colour
+        led.setColor(255, 0, 0); // set both LEDs to 🔴
         led.show();
         return detectRed;
       } 
       else {
-        led.setColor(255, 165, 0); // set both LEDs to orange colour
+        led.setColor(255, 165, 0); // set both LEDs to 🟠
         led.show();
-        return detectOrange; // U-Turn
+        return detectOrange;
       }
   }else if(colourArray[2] > colourArray[0] && colourArray[2] > colourArray[1]) {
     if(colourArray[0] >= 180) {
-        led.setColor(128, 0, 128); // set both LEDs to purple colour
-        led.show(); // Must use .show() to make new colour take effect
+        led.setColor(128, 0, 128); // set both LEDs to 🟣
+        led.show(); 
       return detectPurple;
     }else {
-        led.setColor(0, 0, 255); // set both LEDs to blue colour
+        led.setColor(0, 0, 255); // set both LEDs to 🔵
         led.show();
       return detectBlue;
     }
@@ -402,18 +292,6 @@ void setup(){
   pinMode(ULTRASONIC, OUTPUT);
   pinMode(A7, INPUT); // Setup A7 as input for the push button
 
-  whiteArray[0] = 988;
-  whiteArray[1] = 1009;
-  whiteArray[2] = 992;
-
-  blackArray[0] = 908;
-  blackArray[1] = 987;
-  blackArray[2] = 906;
-  
-  greyDiff[0] = 80;
-  greyDiff[1] = 22;
-  greyDiff[2] = 86;
-
 
 }
 
@@ -465,8 +343,9 @@ void loop()
         case detectWhite:
           leftMotor.stop();
           rightMotor.stop();
-          celebrate(); // play "Never Gonna Give You Up"
-          delay(100000);
+          while(1) {
+            celebrate(); // play "Never Gonna Give You Up"
+          }
           break;
       };
     }
