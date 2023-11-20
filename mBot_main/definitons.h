@@ -1,12 +1,11 @@
-#ifndef DEFINITIONS_H
-#define DEFINITIONS_H
-
 /**
  * @defintions.h
  * @brief This file contains all definitions and global arrays/variables in one place for easy reference.
  *
  * @author S3T4
  */
+#ifndef DEFINITIONS_H
+#define DEFINITIONS_H
 
 
 /**
@@ -28,6 +27,7 @@
  * The echo pin receives the reflected ultrasonic pulses, allowing the calculation of the distance.
  */
  #define ULTRASONIC 12
+
 /**
  * @brief Ultrasonic sensor timeout.
  *
@@ -42,6 +42,7 @@
  */
 #define SPEED_OF_SOUND 340
 /** @} */
+
 
 /**
  * @defgroup MusicNotes Music Notes
@@ -144,6 +145,7 @@
 #define REST      0
 /** @} */
 
+
 /**
  * @defgroup MelodyDefinitions Melody Definitions
  * @brief Constants and variables related to a musical melody.
@@ -154,6 +156,7 @@
  *
  * @{
  */
+
 // Increasing tempo makes the song faster (BPM)
 int tempo = 150;
 
@@ -166,6 +169,7 @@ int melody[] = {
   NOTE_E5,4, NOTE_D5,2, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16,
  };
 /** @} */
+
 
 /**
  * @defgroup PinAndSensorDefinitions Pin and Sensor Definitions
@@ -181,13 +185,14 @@ int melody[] = {
  */
 
 // Pin assignments for LEDs and IR emitter
-#define A A0 //S1 (Pin 2 of Decoder)
-#define B A1 //S2 (Pin 3 of Decoder)
+#define A A0 // S1 (Pin 2 of Decoder)
+#define B A1 // S2 (Pin 3 of Decoder)
 
 // Pin assignments for reading LDR/IR Detector voltages
-#define LDR A2 //Using Port 3 S1 to read LDR Voltage
-#define IRD A3 //Using Port 3 S2 to read IR Detector Voltage
+#define LDR A2 // Using Port 3 S1 to read LDR Voltage
+#define IRD A3 // Using Port 3 S2 to read IR Detector Voltage
 /** @} */
+
 
 /**
  * @defgroup HardwareObjects Hardware Objects
@@ -198,6 +203,7 @@ int melody[] = {
  *
  * @{
  */
+
 MeDCMotor leftMotor(M1); // Assigning leftMotor to port M1
 MeDCMotor rightMotor(M2); // Assigning RightMotor to port M2
 MeLineFollower lineFollower(PORT_2); // Assigning lineFollower to RJ25 port 2
@@ -213,6 +219,7 @@ MeRGBLed led(0,30); // Based on hardware connections on mCore; cannot change
  * - 0: Do nothing
  * - 1: mBot runs
  */
+
 int status = 0; // Global status; 0 = Do nothing, 1 = mBot runs
 
 
@@ -232,9 +239,9 @@ int status = 0; // Global status; 0 = Do nothing, 1 = mBot runs
  */
 
 // Define time delay before the next RGB colour turns ON to allow LDR to stabilize
-#define RGBWait 50 //in milliseconds
+#define RGBWait 50 // in milliseconds
 // Define time delay before taking another LDR reading
-#define LDRWait 15 //in milliseconds
+#define LDRWait 15 // in milliseconds
 
 // High Low Pair used to specifically control each R, G and B LED by varying A and B's Analog Signal
 struct LEDPair {
@@ -263,7 +270,7 @@ int blue = 0;
 // Floats to hold colour arrays
 float colourArray[] = {0,0,0};
 
-//White and Blackarray vals determined experimentally
+// White and Black array values determined experimentally
 float whiteArray[] = {988,1009,992};
 float blackArray[] = {908,987,906};
 float greyDiff[] = {80,22,86};
