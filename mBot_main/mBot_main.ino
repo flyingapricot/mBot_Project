@@ -1,8 +1,35 @@
 #include <MeMCore.h>
 #include "definitons.h"
+/**
+ * @file mBot_main.ino
+ * @brief mBot Movement and Sensor Control
+ *
+ * This file defines functions for controlling the movement of an mBot robot and integrating sensor functionalities,
+ * including line following, color detection, and ultrasonic distance measurement.
+ *
+ * The file implements functions for mBot movements such as moving forward, stopping, turning left or right, performing
+ * u-turns, and executing specific maneuvers based on color detection. Additionally, it includes functions for reading
+ * sensor values, controlling the RGB LED, and playing a celebratory melody.
+ *
+ * The robot's behavior is controlled based on a global status variable. When the status is set to 1, the mBot performs
+ * various movements and sensor-based actions. The status can be toggled using a push button.
+ *
+ * @note This code assumes the use of the MeMCore library for mBot control.
+ * @note The color detection is based on readings from an LDR and an RGB LED.
+ * @note The ultrasonic sensor is used for distance measurement.
+ * @note The line follower is used to detect black lines.
+ * @note The buzzer is used for playing celebratory melodies.
+ * @note The RGB LED is used for indicating detected colors.
+ *
+ * @see definitions.h Header file containing additional definitions.
+ *
+ * @author S3T4
+ */
 
 
 /** Start of mBot Movement functions**/
+
+//Moves the mBot forward in a straight line
 void moveForward() {
   leftMotor.run(-255); // Negative: Left wheel revolves forwards
   rightMotor.run(255); // Positive: Right wheel revolves forwards
@@ -89,15 +116,15 @@ void successiveRight() {
 /** End of mBot Movement functions **/
 
 
-int shineIR() {
+float shineIR() {
   // Power on IR Emitter
   analogWrite(A,LOW); //Setting A0 to High/Low
   analogWrite(B,LOW); //Setting A1 to High/Low
 
   delay(500);
 
-  int ans = analogRead(IRD);
-
+  float raw = analogRead(IRD);
+  float ans = (raw - 6.525)/19.826;
   return ans;
 }
 
@@ -344,8 +371,7 @@ void setup(){
 
 }
 
-void loop()
-{
+void loop(){
 
   if (analogRead(A7) < 100) { // If push button is pushed, the value will be very low
     status = 1 - status; // Toggle status
@@ -353,7 +379,7 @@ void loop()
 
   if(status == 1) {
     double distance_right = ultrasonic_dist();
-    int distance_left = shineIR(); 
+    float distance_left = shineIR(); 
     float dx = distance_right - 8;
     moveForward();
 
