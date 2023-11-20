@@ -1,5 +1,3 @@
-#include <MeMCore.h>
-#include "definitons.h"
 /**
  * @file mBot_main.ino
  * @brief mBot Movement and Sensor Control
@@ -25,6 +23,9 @@
  *
  * @author S3T4
  */
+#include <MeMCore.h>
+#include "definitons.h"
+
 
 void setup() {
 
@@ -42,8 +43,8 @@ void setup() {
   pinMode(B, OUTPUT);
 
   //Setting A2 and A3 to input to recieve input from IR Detector + LDR
-  pinMode(IRD, INPUT); // A1 recieves input from IR Detector
-  pinMode(LDR, INPUT); // A2 recieves input from LDR
+  pinMode(IRD, INPUT); // A2 recieves input from IR Detector
+  pinMode(LDR, INPUT); // A3 recieves input from LDR
   
   pinMode(ULTRASONIC, OUTPUT);
   pinMode(A7, INPUT); // Setup A7 as input for the push button
@@ -433,7 +434,7 @@ void loop() {
           leftMotor.stop(); // Left wheel Stop
           rightMotor.stop(); // Right wheel stop
           while (1) {
-            celebrate(); // play "Never Gonna Give You Up"
+            celebrate(); // Plays "Never Gonna Give You Up"
           }
           break;
       };
