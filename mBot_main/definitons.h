@@ -27,8 +27,7 @@
  * The trigger pin initiates the emission of ultrasonic pulses for distance measurement.
  * The echo pin receives the reflected ultrasonic pulses, allowing the calculation of the distance.
  */
-#define ULTRASONIC 12
-
+ #define ULTRASONIC 12
 /**
  * @brief Ultrasonic sensor timeout.
  *
@@ -43,7 +42,6 @@
  */
 #define SPEED_OF_SOUND 340
 /** @} */
-
 
 /**
  * @defgroup MusicNotes Music Notes
@@ -158,12 +156,12 @@
  */
 // Increasing tempo makes the song faster (BPM)
 int tempo = 150;
+
 // Melody for "Never gonna give you up"
 int melody[] = {
   NOTE_D5,16, NOTE_B4,16,
   NOTE_FS5,-8, NOTE_FS5,-8, NOTE_E5,-4, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16,
-
-  NOTE_E5,-8, NOTE_E5,-8, NOTE_D5,-8, NOTE_CS5,16, NOTE_B4,-8, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16, //18
+  NOTE_E5,-8, NOTE_E5,-8, NOTE_D5,-8, NOTE_CS5,16, NOTE_B4,-8, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16, // 18
   NOTE_D5,4, NOTE_E5,8, NOTE_CS5,-8, NOTE_B4,16, NOTE_A4,8, NOTE_A4,8, NOTE_A4,8, 
   NOTE_E5,4, NOTE_D5,2, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16,
  };
@@ -181,8 +179,6 @@ int melody[] = {
  *
  * @{
  */
-
-//
 
 // Pin assignments for LEDs and IR emitter
 #define A A0 //S1 (Pin 2 of Decoder)
