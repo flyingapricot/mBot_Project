@@ -42,7 +42,7 @@ void setup() {
   pinMode(B, OUTPUT);
 
   //Setting A2 and A3 to input to recieve input from IR Detector + LDR
-  pinMode(IRD, INPUT); // A1 recieves input from IR Detector
+  pinMode(IRD, INPUT); // A3 recieves input from IR Detector
   pinMode(LDR, INPUT); // A2 recieves input from LDR
   
   pinMode(ULTRASONIC, OUTPUT);
